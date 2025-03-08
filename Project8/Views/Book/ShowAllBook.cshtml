@@ -26,7 +26,7 @@
                             <h4>
                                 <a title="@item.TenSach" href="/Book/Details/@item.MaSach" style="color:green;">@(item.TenSach.Length > 26 ? item.TenSach.Substring(0, 22) + "..." : item.TenSach)</a>
                             </h4>
-                            <a class="btn btn-warning" href="/Cart/AddItem/?id=@item.MaSach&quantity=1">Mua hàng</a>
+                            <a class="btn btn-warning" href="/Cart/Add/?id=@item.MaSach&quantity=1">Mua hàng</a>
                             @if (item.GiaBan > 0)
                             {
                                 <h4 class="pull-right" style="color:red;">@item.GiaBan.Value.ToString("N0") VND</h4>

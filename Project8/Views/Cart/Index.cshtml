@@ -1,77 +1,173 @@
 ﻿@model List<WebBanSach.Models.CartModel>
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Giỏ hàng";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@section jsFooter{
 
-    <script src="/Content/Client/js/controller/cartController.js"></script>
-}
+<div class="container">
+    <h2 style="margin-bottom: 20px;">Giỏ hàng của bạn</h2>
 
-<h2 style="margin-bottom: 20px;">Giỏ hàng của bạn</h2>
-@if (Model.Count > 0)
-{
-    <table id="cart" class="table table-hover table-condensed">
-        <thead>
-            <tr>
-                <th style="width:50%">Sản phẩm</th>
-                <th style="width:10%">Giá</th>
-                <th style="width:8%">Số lượng</th>
-                <th style="width:22%" class="text-center">Thành tiền</th>
-                <th style="width:10%"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    @if (Model.Count > 0)
+    {
+        <table id="cart" class="table table-hover table-condensed table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td data-th="Product">
-                        <div class="row">
-                            <div class="col-sm-2 hidden-xs"><img src="~/images/@item.sach.AnhBia" alt="@item.sach.AnhBia" class="img-responsive" /></div>
-                            <div class="col-sm-10">
-                                <h4 class="nomargin">@item.sach.TenSach</h4>
+                    <th style="width:50%">Sản phẩm</th>
+                    <th style="width:15%">Giá</th>
+                    <th style="width:10%">Số lượng</th>
+                    <th style="width:20%" class="text-center">Thành tiền</th>
+                    <th style="width:5%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr data-id="@item.sach.MaSach">
+                        <td data-th="Product">
+                            <div class="row align-items-center">
+                                <div class="col-sm-2 hidden-xs">
+                                    <img src="~/images/@item.sach.AnhBia" alt="@item.sach.TenSach" class="img-responsive img-thumbnail" style="max-height: 80px;" />
+                                </div>
+                                <div class="col-sm-10">
+                                    <h4 class="nomargin">@item.sach.TenSach</h4>
+                                </div>
                             </div>
-                        </div>
+                        </td>
+                        <td data-th="Price">@item.sach.GiaBan.GetValueOrDefault(0).ToString("N0") VND</td>
+                        <td data-th="Quantity">
+                            <input type="number" class="form-control txtQuantity" data-id="@item.sach.MaSach" value="@item.Quantity" min="0" step="1" style="width: 80px; text-align: center;">
+                        </td>
+                        <td data-th="Subtotal" class="text-center">@((item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity).ToString("N0")) VND</td>
+                        <td class="actions text-center">
+                            <button class="btn btn-danger btn-sm btn-delete" data-id="@item.sach.MaSach">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2">
+                        <a href="/Home/" class="btn btn-warning"><i class="fa fa-angle-left"></i> Tiếp tục mua hàng</a>
+                        <button id="btnUpdate" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Cập nhật</button>
+                        <button id="btnDeleteAll" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> Xóa tất cả</button>
                     </td>
-                    <td data-th="Price">@item.sach.GiaBan.GetValueOrDefault(0).ToString("N0") VND</td>
-                    <td data-th="Quantity">
-                        <input type="number" class="txtQuantity" data-id="@item.sach.MaSach" value="@item.Quantity">
+                    <td colspan="1" class="hidden-xs"></td>
+                    <td class="text-center hidden-xs">
+                        <strong id="totalAmount">Tổng cộng: @String.Format("{0:N0}", ViewBag.Total) VND</strong>
                     </td>
-                    <td data-th="Subtotal" class="text-center">@((item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity).ToString("N0")) VND</td>
-                    <td class="actions" data-th="">
-                        @*nút xóa*@
-                        <button id="btnDelete" data-id="@item.sach.MaSach" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
-                        @*kết thúc nút xóa*@
+                    <td>
+                        <a href="/Cart/Payment" class="btn btn-success btn-block">Thanh toán <i class="fa fa-angle-right"></i></a>
                     </td>
                 </tr>
+            </tfoot>
+        </table>
+    }
+    else
+    {
+        <div class="empty-cart-message" @(Model.Count > 0 ? "style=\"display:none;\"" : "")>
+            <div class="alert alert-danger" role="alert">
+                Chưa có sản phẩm nào trong giỏ hàng
+            </div>
+            <a href="/Home/" class="btn btn-warning" style="margin-top: 20px;">
+                <i class="fa fa-angle-left"></i> Tiếp tục mua hàng
+            </a>
+        </div>
+    }
+</div>
+
+
+
+@section jsFooter {
+    <script src="/Content/Client/js/controller/cartController.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Auto-update quantity
+            $('.txtQuantity').on('input', function () {
+                var $row = $(this).closest('tr');
+                var maSach = $(this).data('id');
+                var quantity = parseInt($(this).val()) || 0;
+                var price = parseFloat($row.find('td[data-th="Price"]').text().replace(' VND', '').replace(/,/g, ''));
+
+                if (quantity <= 0) {
+                    $.post('/Cart/Remove', { id: maSach }, function (response) {
+                        if (response.success) {
+                            $row.remove();
+                            updateCartUI(response);
+                        } else {
+                            alert(response.message);
+                        }
+                    });
+                } else {
+                    $.post('/Cart/Update', { id: maSach, quantity: quantity }, function (response) {
+                        if (response.success) {
+                            var subtotal = price * quantity;
+                            $row.find('td[data-th="Subtotal"]').text(subtotal.toLocaleString('vi-VN') + ' VND');
+                            updateCartUI(response);
+                        } else {
+                            alert(response.message);
+                        }
+                    });
+                }
+            });
+
+            // Delete button
+            $('.btn-delete').on('click', function () {
+                var maSach = $(this).data('id');
+                var $row = $(this).closest('tr');
+                $.post('/Cart/Remove', { id: maSach }, function (response) {
+                    if (response.success) {
+                        $row.remove();
+                        updateCartUI(response);
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            });
+
+            // Delete all
+            $('#btnDeleteAll').on('click', function () {
+                $.post('/Cart/Clear', function (response) {
+                    if (response.success) {
+                        $('#cart tbody tr').remove();
+                        $('#cart').hide();
+                        $('.empty-cart-message').show();
+                        updateCartUI(response);
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            });
+
+            // Update UI helper
+            function updateCartUI(response) {
+                $('#totalAmount').text('Tổng cộng: ' + response.total.toLocaleString('vi-VN') + ' VND');
+                if (response.itemCount === 0) {
+                    $('#cart').hide();
+                    $('.empty-cart-message').show();
+                }
             }
-        </tbody>
-        <tfoot>
-            <tr class="visible-xs">
-                <td class="text-center"><strong>Total 1.99</strong></td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/Home/" class="btn btn-warning"><i class="fa fa-angle-left"></i> Tiếp tục mua hàng</a>
-                    @*nút cập nhật*@
-                    <button id="btnUpdate" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Cập nhật</button>
-                    @*kết thúc nút cập nhật*@
-                    @*nút xóa*@
-                    <button id="btnDeleteAll" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> Xóa tất cả</button>
-                    @*kết thúc nút xóa*@
-                </td>
-                <td colspan="2" class="hidden-xs"></td>
-                <td class="hidden-xs text-center"><strong>Tổng cộng: @String.Format("{0:0,0}", ViewBag.Total) VND</strong></td>
-                <td><a href="/Cart/Payment" class="btn btn-success btn-block">Thanh toán <i class="fa fa-angle-right"></i></a></td>
-            </tr>
-        </tfoot>
-    </table>
-}
-else
-{
-    <span class="alert alert-danger">Chưa có sản phẩm nào trong giỏ hàng</span>
-    <br />
-    <a href="/Home/" style="margin-top: 20px;" class="btn btn-warning"> Tiếp tục mua hàng</a>
+
+            // Initial state
+            if ($('#cart tbody tr').length === 0) {
+                $('#cart').hide();
+                $('.empty-cart-message').show();
+            }
+        });
+    </script>
 }
 
+<style>
+    .table th, .table td {
+        vertical-align: middle !important;
+    }
 
+    .nomargin {
+        margin: 0;
+    }
+
+    .btn-sm {
+        margin-right: 5px;
+    }
+</style>

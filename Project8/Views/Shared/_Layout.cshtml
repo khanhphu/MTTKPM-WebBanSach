@@ -11,27 +11,21 @@
     <link href="/Content/Client/css/bootstrap.css" rel="stylesheet" />
     <!-- Custom CSS -->
     <link href="/Content/Client/css/shop-homepage.css" rel="stylesheet" />
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- HTML5 Shim and Respond.js IE8 support -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    @*<link href="/Content/Client/css/font-awesome.min.css" rel="stylesheet" />*@
     <link href="/Content/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
-    @*DataTables*@
+    <!-- DataTables -->
     <link href="/Content/Client/css/jquery.dataTables.min.css" rel="stylesheet" />
-    @*!DataTables*@
     <link href="/Content/Client/css/footer.css" rel="stylesheet" />
 </head>
-<body style="background-color: #F0F0F0;border-bottom: none;">
+<body style="background-color: #F0F0F0; border-bottom: none;">
     <!-- Navigation -->
-    <!-- Start of HubSpot Embed Code -->
     <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/8722341.js"></script>
-    <!-- End of HubSpot Embed Code -->
     <nav style="background: #33FF99; border-radius: 0px 0px 30px 30px; border: none" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
@@ -40,15 +34,11 @@
                     <span class="icon-bar"></span>
                 </button>
             </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="/" style="font-size:25px; color:#525151;"><i class="fa fa-home" aria-hidden="true"></i> WEBBANSACH</a>
-                        
-                        
                     </li>
-
                     <li>
                         <a href="/Home/Contact" style="color:#525151"><i class="fa fa-phone-square" aria-hidden="true" style="color:#525151"></i> Liên hệ</a>
                     </li>
@@ -57,7 +47,6 @@
                     @using (Html.BeginForm("SearchResult", "Home", FormMethod.Post, new { @class = "navbar-form", @role = "search" }))
                     {
                         <div class="input-group">
-                            @*<input style="width: 370px;" type="text" class="form-control" placeholder="Tìm kiếm sách..." name="search">*@
                             @Html.TextBox("txtSearch", "", htmlAttributes: new { @class = "form-control", @placeholder = "Tìm kiếm sách...", @style = "width: 370px;background: #FAFAFA;border-radius: 40px;" })
                             <span class="input-group-btn">
                                 <button style="background: #e658588c; border-radius: 40px;" class="btn btn-default" type="submit">
@@ -67,128 +56,81 @@
                         </div>
                     }
                 </div>
-                @*Menu right*@
                 @Html.Action("Login", "User")
-                @*ket thuc Menu right*@
             </div>
-            <!-- /.navbar-collapse -->
         </div>
-        <!-- /.container -->
     </nav>
     <!-- Page Content -->
     <div class="container">
         @RenderBody()
     </div>
-    <!-- /.container -->
+    <!-- Footer -->
     <div class="container-fluid" style="padding-left:0px;padding-right:0px">
         <hr>
-        <div class="container">
-            <footer>
-              
-               
-
-
-            </footer>
-
-        </div>  
-        <!-- Footer -->
         <footer>
-            <div style="background: #33FF99;border-radius: 39px 39px 0px 0px; " class="footer" id="footer">
+            <div style="background: #33FF99;border-radius: 39px 39px 0px 0px;" class="footer" id="footer">
                 <div class="container">
-                    
                     <div class="row">
-                        
-                        <div class="col-lg-3  col-md-2 col-sm-4 col-xs-6">
+                        <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6">
                             <h3 style="color:#515252;"> Trợ giúp </h3>
                             <ul>
-                                <li> <a href="/Home/QuyDinh" style="color:#515252;font-size:1.6rem"> Qui định sử dụng </a> </li>
-                                <li> <a href="/Home/Thanhtoan" style="color:#515252;font-size:1.6rem"> Phương thức thanh toán </a> </li>
-                                <li> <a href="/Home/VanChuyen" style="color:#515252;font-size:1.6rem"> Phương thức vận chuyển </a> </li>
+                                <li><a href="/Home/QuyDinh" style="color:#515252;font-size:1.6rem"> Qui định sử dụng </a></li>
+                                <li><a href="/Home/Thanhtoan" style="color:#515252;font-size:1.6rem"> Phương thức thanh toán </a></li>
+                                <li><a href="/Home/VanChuyen" style="color:#515252;font-size:1.6rem"> Phương thức vận chuyển </a></li>
                             </ul>
                         </div>
-                        <div class="col-lg-3  col-md-2 col-sm-4 col-xs-6">
+                        <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6">
                             <h3 style="color:#515252"> Hỗ trợ </h3>
                             <ul>
-                                <li> <a href="/Home/DoiTra" style="color:#515252;font-size:1.6rem"> Chính sách đổi trả </a> </li>
-                                <li> <a href="/Home/Help" style="color:#515252;font-size:1.6rem"> Các câu hỏi thường gặp </a> </li>
+                                <li><a href="/Home/DoiTra" style="color:#515252;font-size:1.6rem"> Chính sách đổi trả </a></li>
+                                <li><a href="/Home/Help" style="color:#515252;font-size:1.6rem"> Các câu hỏi thường gặp </a></li>
                             </ul>
                         </div>
-                        <div class="col-lg-2  col-md-2 col-sm-4 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
                             <h3 style="color:#515252"> Tài khoản </h3>
                             <ul>
-                                <li> <a href="/User/Register" style="color:#515252;font-size:1.6rem"> Đăng ký thành viên</a> </li>
+                                <li><a href="/User/Register" style="color:#515252;font-size:1.6rem"> Đăng ký thành viên</a></li>
                             </ul>
                         </div>
-
                         <div class="col-xs-3">
-                            <div @*class="col-lg-3  col-md-3 col-sm-6 col-xs-12 "*@>
-                                <h3 style="color:#515252"> Follow Us </h3>
-                                @*<ul>
-                                    <li>
-                                        <div class="input-append newsletter-box text-center">
-                                            <input type="text" class="form-control" placeholder="Email..." />
-                                            <button class="btn-warning btn-block btn-md" type="button"> ĐĂNG KÝ <i class="fa fa-long-arrow-right"> </i> </button>
-                                        </div>
-                                    </li>
-                                </ul*@
-                                @*<ul class="social">
-                                    <li> <a href="https://goo.gl/fpbZzR"> <i class="fa fa-facebook-official" aria-hidden="true"></i> </a> </li>
-                                    <li> <a href="https://goo.gl/mfjtLE"> <i class="fa fa-youtube-play" aria-hidden="true"></i> </a> </li>
-                                </ul>*@
-                            </div>
-                            <ul class="footer-social ">
-                                <li>
-                                    <a rel="nofollow" href="https://www.youtube.com/" title="Youtube" target="_blank" style="color:#515252;font-size:1.6rem"><i class="fa fa-youtube-play"></i> Youtube</a>
-                                </li>
-                                <li>
-                                    <a rel="nofollow" href="https://www.facebook.com/profile.php?id=100012552256951" title="Facebook" target="_blank" style="color:#515252;font-size:1.6rem"><i class="fa fa-facebook-square"></i> Facebook</a>
-                                </li>
-
+                            <h3 style="color:#515252"> Follow Us </h3>
+                            <ul class="footer-social">
+                                <li><a rel="nofollow" href="https://www.youtube.com/" title="Youtube" target="_blank" style="color:#515252;font-size:1.6rem"><i class="fa fa-youtube-play"></i> Youtube</a></li>
+                                <li><a rel="nofollow" href="https://www.facebook.com/profile.php?id=100012552256951" title="Facebook" target="_blank" style="color:#515252;font-size:1.6rem"><i class="fa fa-facebook-square"></i> Facebook</a></li>
                             </ul>
                             <div class="footer-apps">
-                                @*<p class="intro hidden-lg hidden-md"></p>*@
-                                <a stype="height: 35px" rel="nofollow" href="https://play.google.com/apps" target="_blank">
-                                    <img style="height: 35px" alt="Get it on Google Play" class="lazy" src="https://vcdn.tikicdn.com/assets/img/google-play.svg?v=1" style="display: inline; background-image: none;">
+                                <a rel="nofollow" href="https://play.google.com/apps" target="_blank">
+                                    <img style="height: 35px" alt="Get it on Google Play" class="lazy" src="https://vcdn.tikicdn.com/assets/img/google-play.svg?v=1">
                                 </a>
                                 <a rel="nofollow" href="http://appstore.vn/home/" target="_blank">
-                                    <img style="height: 35px" class="lazy" src="https://vcdn.tikicdn.com/assets/img/app-store.svg?v=1" style="display: inline; background-image: none;">
+                                    <img style="height: 35px" class="lazy" src="https://vcdn.tikicdn.com/assets/img/app-store.svg?v=1">
                                 </a>
-                                <!-- <a href="https://mixpanel.com/f/partner" class=""><img style="padding-top: 5px;" src="/assets/img/badge_light.png" alt="Mobile Analytics"></a> -->
                             </div>
                         </div>
-                    </div>                  
+                    </div>
                     <div class="container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; position: relative;">
-                        <div style="color: white; position:absolute;color:#515252;font-size:1.6rem">
-                            <p>&copy; @DateTime.Now.Year - Web Nhóm 8 </p>
+                        <div style="color:#515252;font-size:1.6rem">
+                            <p>© @DateTime.Now.Year - Web Nhóm 8 </p>
                         </div>
                         <div class="block" style="margin-left:710px;">
-                            <a href="https://hotro.tiki.vn/hc/vi/articles/115005575826" rel="noreferrer" aria-label=""><img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong-2.png" width="36" alt=""></a><a href="http://online.gov.vn/HomePage/WebsiteDisplay.aspx?DocId=21201" rel="noreferrer" aria-label=""><img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong.svg" width="120" alt=""></a>
+                            <a href="https://hotro.tiki.vn/hc/vi/articles/115005575826" rel="noreferrer"><img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong-2.png" width="36" alt=""></a>
+                            <a href="http://online.gov.vn/HomePage/WebsiteDisplay.aspx?DocId=21201" rel="noreferrer"><img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong.svg" width="120" alt=""></a>
                         </div>
                     </div>
-                    <!--/.row-->
                 </div>
-                <!--/.container-->
             </div>
-            <!--/.footer-->
-            @*<div style="background-color: #087BB0" class="footer-bottom">
-
-            </div>*@
-            <!--/.footer-bottom-->
         </footer>
     </div>
-    <!-- /.container -->
-    <!-- jQuery -->
-    <script src="/Content/Client/js/jquery.js"></script>
-    @*DataTables*@
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
     <script src="/Content/Client/js/jquery.dataTables.min.js"></script>
-    @*!DataTables*@
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/Content/Client/js/bootstrap.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('#thongBaoThanhCong').delay(3000).slideUp();
         });
     </script>
     @RenderSection("jsFooter", required: false)
+    @RenderSection("scripts", required: false)
 </body>
 </html>

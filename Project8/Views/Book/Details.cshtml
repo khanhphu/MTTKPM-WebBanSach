@@ -11,28 +11,16 @@
     </div>
     <div style="max-width:600px; float:left;" class="span7">
         <h2>@Model.TenSach</h2>
-        <h4 class="muted">Thể loại : @Model.TheLoai.TenLoai - Tác giả: @Model.TacGia.TenTG</h4>
-        <p>Nhà xuất bản : @Model.NhaXuatBan.TenNXB</p>
-        <p>@Model.Mota </p>
-        <hr>
-        @if(Model.SoLuongTon > 0)
-        {
-            <p>Tình trạng: Còn hàng</p>
-        }
-        else
-        {
-            <p>Tình trạng: Liên hệ</p>
-        }
-        @if (Model.GiaBan >0)
-        {
-            <h3>Giá - @Model.GiaBan.Value.ToString("N0") VND</h3>
-        }
-        else
-        {
-            <h3>Giá - Liên hệ</h3>
-        }
-        <br>
-        <p><a href="/Cart/AddItem/?id=@Model.MaSach&quantity=1" class="btn btn-warning btn-large">THÊM VÀO GIỎ HÀNG</a></p>
+        <h4 class="muted">Thể loại: @Model.TheLoai.TenLoai - Tác giả: @Model.TacGia.TenTG</h4>
+        <p>Nhà xuất bản: @Model.NhaXuatBan.TenNXB</p>
+        <p>@Model.Mota</p>
+        <hr />
+        <p>Tình trạng: @(Model.SoLuongTon > 0 ? "Còn hàng" : "Liên hệ")</p>
+        <h3>Giá: @(Model.GiaBan > 0 ? Model.GiaBan.Value.ToString("N0") + " VND" : "Liên hệ")</h3>
+        <br />
+        <p>
+            <a href="#" class="btn btn-warning btn-large add-to-cart" data-id="@Model.MaSach">THÊM VÀO GIỎ HÀNG</a>
+        </p>
     </div>
 </div>
 
@@ -42,4 +30,25 @@
     @Html.Action("FavoriteBook", "Book")
 </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $('.add-to-cart').on('click', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                var maSach = $(this).data('id');
+                var quantity = 1;
 
+                $.post('/Cart/Add', { id: maSach, quantity: quantity }, function (response) {
+                    if (response.success) {
+                        alert('Đã thêm "' + '@Model.TenSach' + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
+                        // Optional: Redirect to cart
+                        // window.location.href = '/Cart/Index';
+                    } else {
+                        alert(response.message);
+                    }
+                }).fail(function (xhr, status, error) {
+                    alert('Lỗi kết nối đến server: ' + error);
+                });
+            });
+        });
+    </script>
