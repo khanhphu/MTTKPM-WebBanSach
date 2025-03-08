@@ -14,7 +14,7 @@ namespace WebBanSach.Models.Process
         //constructor :  khởi tạo đối tượng
         public HomeProcess()
         {
-            db = new BSDBContext();
+            db = BSDBContext.Instance;
         }
 
         /// <summary>

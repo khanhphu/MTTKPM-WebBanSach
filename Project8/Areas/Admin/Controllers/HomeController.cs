@@ -16,7 +16,7 @@ namespace WebBanSach.Areas.Admin.Controllers
         //Trang quản lý
 
         //Khởi tạo biến dữ liệu : db
-        BSDBContext db = new BSDBContext();
+        BSDBContext db = BSDBContext.Instance;
 
         // GET: Admin/Home : trang chủ Admin
         public ActionResult Index()

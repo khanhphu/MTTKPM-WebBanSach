@@ -7,9 +7,28 @@ namespace WebBanSach.Models.Data
 
     public partial class BSDBContext : DbContext
     {
-        public BSDBContext()
-            : base("name=BSBD2")
+        private static BSDBContext _instance;
+        private static readonly object _lock = new object();
+        private BSDBContext(): base("name=BSBD2")
         {
+        }
+
+        public static BSDBContext Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                        {
+                            _instance = new BSDBContext();
+                        }
+                    }
+                }
+                return _instance;
+            }
         }
 
         public virtual DbSet<Admin> Admins { get; set; }

@@ -12,7 +12,7 @@ namespace WebBanSach.Controllers
 {
     public class BookController : Controller
     {
-        BSDBContext db = new BSDBContext();
+        BSDBContext db = BSDBContext.Instance;
         // GET: Book
         public ActionResult Index()
         {
