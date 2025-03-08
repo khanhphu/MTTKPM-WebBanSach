@@ -9,9 +9,12 @@
             </a>
             <div class="caption">
                 <h4>
-                    <a title="@item.TenSach" href="/Book/Details/@item.MaSach" style="color:#087BB0;">@(item.TenSach.Length > 26 ? item.TenSach.Substring(0, 22) + "..." : item.TenSach)</a>
+                    <a title="@item.TenSach" href="/Book/Details/@item.MaSach" style="color:#087BB0;">
+                        @(item.TenSach.Length > 26 ? item.TenSach.Substring(0, 22) + "..." : item.TenSach)
+                    </a>
                 </h4>
-                <a style="color:black" class="btn btn-warning" href="/Cart/AddItem/?id=@item.MaSach&quantity=1">Mua</a>
+                <a class="btn btn-warning add-to-cart" data-id="@item.MaSach" data-name="@item.TenSach">Mua</a>
+
                 @if (item.GiaBan > 0)
                 {
                     <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
@@ -23,4 +26,50 @@
             </div>
         </div>
     </div>
+}
+
+@section jsFooter {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script>
+        if (typeof jQuery === 'undefined') {
+            console.log('jQuery failed to load!');
+        } else {
+            console.log('jQuery loaded successfully');
+        }
+
+        $(document).ready(function () {
+            console.log('Document is ready');
+
+            $('.add-to-cart').on('click', function (e) {
+                e.preventDefault();
+                console.log('Add to cart button clicked');
+
+                var maSach = $(this).data('id');
+                var bookName = $(this).data('name');
+                var quantity = 1;
+
+                console.log('MaSach:', maSach, 'BookName:', bookName);
+
+                if (!maSach) {
+                    alert('Lỗi: Không tìm thấy MaSach');
+                    console.log('No MaSach found');
+                    return;
+                }
+
+                $.post('/Cart/Add', { id: maSach, quantity: quantity }, function (response) {
+                    console.log('AJAX Success:', response);
+                    if (response.success) {
+                        alert('Đã thêm "' + bookName + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
+                        window.location.href = '/Cart/Index';
+                    } else {
+                        alert(response.message);
+                    }
+                }).fail(function (xhr, status, error) {
+                    console.error('AJAX Error:', status, error, xhr.responseText);
+                    alert('Lỗi kết nối đến server: ' + error);
+                });
+            });
+        });
+    </script>
 }

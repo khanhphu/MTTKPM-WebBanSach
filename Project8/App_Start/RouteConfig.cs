@@ -19,6 +19,7 @@ namespace WebBanSach
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
                 namespaces: new[] { "WebBanSach.Controllers" }
             );
+
         }
     }
 }

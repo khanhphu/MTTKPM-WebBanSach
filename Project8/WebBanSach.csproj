@@ -89,6 +89,9 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\lib\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
       <Private>True</Private>
@@ -161,11 +164,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -176,6 +174,7 @@
     <Compile Include="Areas\Admin\Models\LoginModel.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\CartController.cs" />
+    <Compile Include="Controllers\CheckoutController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -188,9 +187,11 @@
     <Compile Include="Models\Data\DonDatHang.cs" />
     <Compile Include="Models\Data\DonDatHang_Ajax.cs" />
     <Compile Include="Models\Data\DonDatHang_m.cs" />
+    <Compile Include="Models\Data\IOrderFactory.cs" />
     <Compile Include="Models\Data\KhachHang.cs" />
     <Compile Include="Models\Data\LienHe.cs" />
     <Compile Include="Models\Data\NhaXuatBan.cs" />
+    <Compile Include="Models\Data\OrderFactory.cs" />
     <Compile Include="Models\Data\Sach.cs" />
     <Compile Include="Models\Data\TacGia.cs" />
     <Compile Include="Models\Data\TheLoai.cs" />
@@ -1173,6 +1174,7 @@
     <Content Include="Views\Cart\TrackingOderDetails.cshtml" />
     <Content Include="Views\Cart\View.cshtml" />
     <Content Include="Views\Cart\Error.cshtml" />
+    <Content Include="Views\Checkout\Checkout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

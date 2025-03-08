@@ -1,16 +1,21 @@
-﻿@model List<WebBanSach.Models.CartModel>
+﻿
+@{
+    ViewBag.Title = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<WebBanSach.Models.CartModel>
 
 @{
     ViewBag.Title = "Thanh toán";
-    var culture = new System.Globalization.CultureInfo("vi-VN");
 }
 
 <div class="container mt-5">
     <h2>Thanh toán</h2>
     @if (Model.Any())
     {
-        <form action="@Url.Action("Payment", "Cart")" method="post">
-            <input type="hidden" name="MaKH" value="@Session["User"]" /> @* Adjust to get MaKH *@
+        <form action="@Url.Action("Checkout", "Checkout")" method="post">
+            <input type="hidden" name="customerId" value="1" /> @* Replace with actual customer ID *@
             <table class="table">
                 <thead>
                     <tr>
@@ -26,20 +31,24 @@
                         <tr>
                             <td>@item.sach.TenSach</td>
                             <td>@item.Quantity</td>
-                            <td>@item.sach.GiaBan.GetValueOrDefault(0).ToString("C0",culture)</td>
-                            <td>@item.Total.GetValueOrDefault(0).ToString("C0", culture)</td>
+                            <td>@item.sach.GiaBan.ToString()</td>
+                            <td>@item.Total?.ToString("C")</td>
                         </tr>
                     }
                 </tbody>
             </table>
-            <p>Tổng số lượng: @ViewBag.Quantity</p>
-           <p>Tổng tiền: @ViewBag.Total.ToString("C0", culture)
-            </p>
-            <button type="submit" class="btn btn-success">Xác nhận thanh toán</button>
+            <button type="submit" class="btn btn-success">Đặt hàng</button>
         </form>
     }
     else
     {
         <p>Giỏ hàng của bạn trống.</p>
     }
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationSummary(false)
+        </div>
+    }
 </div>
+

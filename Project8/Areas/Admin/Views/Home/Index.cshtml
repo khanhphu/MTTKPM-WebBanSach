@@ -17,7 +17,7 @@
             farbbibliothek[6] = new Array("#0000FF", "#FFFF00");
             farben = farbbibliothek[4];
             function farbschrift() {
-                for (var i = 0 ; i < Buchstabe.length; i++) {
+                for (var i = 0; i < Buchstabe.length; i++) {
                     document.all["a" + i].style.color = farben[i];
                 }
                 farbverlauf();
@@ -34,14 +34,14 @@
                 }
             }
             function divserzeugen() {
-                for (var i = 0 ; i < Buchstabe.length; i++) {
+                for (var i = 0; i < Buchstabe.length; i++) {
                     document.write("<span id='a" + i + "' class='a" + i + "'>" + Buchstabe[i] + "<\/span>");
                 }
                 farbschrift();
             }
             var a = 1;
             function farbverlauf() {
-                for (var i = 0 ; i < farben.length; i++) {
+                for (var i = 0; i < farben.length; i++) {
                     farben[i - 1] = farben[i];
                 }
                 farben[farben.length - 1] = farben[-1];

@@ -181,6 +181,8 @@ namespace WebBanSach.Controllers
                     Session["User"] = model.TaiKhoan;
                     var kh = db.KhachHangs.Where(x => x.TaiKhoan == model.TaiKhoan).FirstOrDefault();
                     khachhangstatic = kh;
+                    
+
                     //trả về trang chủ
                     return RedirectToAction("Index", "Home");
                 }
