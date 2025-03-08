@@ -15,7 +15,7 @@ namespace WebBanSach.Controllers
         //Trang chủ chương trình
         
         //Khởi tạo biến dữ liệu : db
-        BSDBContext db = new BSDBContext();
+        BSDBContext db = BSDBContext.Instance;
 
         //GET : Home/ : trang chủ 
         public ActionResult Index()

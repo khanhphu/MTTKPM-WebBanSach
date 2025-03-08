@@ -18,7 +18,7 @@ namespace WebBanSach.Controllers
     public class CartController : Controller
     {
         //khởi tạo dữ liệu
-        BSDBContext db = new BSDBContext();
+        BSDBContext db = BSDBContext.Instance;
 
         //tạo 1 chuỗi hằng để gán session
         private const string CartSession = "CartSession";
