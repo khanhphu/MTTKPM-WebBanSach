@@ -14,6 +14,7 @@ namespace WebBanSach.Controllers
     public class CartController : Controller
     {
         //khởi tạo dữ liệu
+
         private readonly BSDBContext db;
         private readonly IOrderFactory _orderFactory;
         //public CartController()
@@ -27,8 +28,10 @@ namespace WebBanSach.Controllers
         }
 
 
+//         BSDBContext db = BSDBContext.Instance;
+// >>>>>>> master
 
-        private const string CartSession = "CartSession";
+//         private const string CartSession = "CartSession";
 
 
         // GET: /Cart/Index

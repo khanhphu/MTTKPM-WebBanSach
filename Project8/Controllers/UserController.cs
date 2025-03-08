@@ -16,7 +16,7 @@ namespace WebBanSach.Controllers
     public class UserController : Controller
     {
         //Khởi tạo biến dữ liệu : db
-        BSDBContext db = new BSDBContext();
+        BSDBContext db = BSDBContext.Instance;
         public static KhachHang khachhangstatic;
         [HttpGet]
         // GET: User

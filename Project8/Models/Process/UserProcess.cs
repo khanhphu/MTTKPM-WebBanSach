@@ -18,7 +18,7 @@ namespace WebBanSach.Models.Process
         /// </summary>
         public UserProcess()
         {
-            db = new BSDBContext();
+            db = BSDBContext.Instance;
         }
 
         /// <summary>

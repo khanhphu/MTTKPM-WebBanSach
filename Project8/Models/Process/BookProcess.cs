@@ -14,7 +14,7 @@ namespace WebBanSach.Models.Process
         //constructor :  khởi tạo đối tượng
         public BookProcess()
         {
-            db = new BSDBContext();
+            db = BSDBContext.Instance;
         }
 
         /// <summary>

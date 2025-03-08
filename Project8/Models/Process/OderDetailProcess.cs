@@ -11,7 +11,7 @@ namespace WebBanSach.Models.Process
         BSDBContext db = null;
         public OderDetailProcess()
         {
-            db = new BSDBContext();
+            db = BSDBContext.Instance;
         }
 
         /// <summary>
