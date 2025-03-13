@@ -20,7 +20,7 @@ namespace Project8.Models.Data
         {
             if (cartModel == null || !cartModel.Any())
             {
-                throw new ArgumentException("Khong the tao don hang vi gio hang trong!");
+                throw new ArgumentException("Không thể tạo đơn hàng vì giỏ hàng trống!");
             }
             var order = new DonDatHang
             {
@@ -37,7 +37,7 @@ namespace Project8.Models.Data
                 var book = await _context.Saches.FindAsync(item.sach.MaSach);
                 if (book == null || book.SoLuongTon < item.Quantity)
                 {
-                    throw new InvalidOperationException($"{book.MaSach} khong ton tai hoac het hang! ");
+                    throw new InvalidOperationException($"{book.MaSach} không tồn tại hoặc hết hàng! ");
                 }
                 order.ChiTietDDHs.Add(new ChiTietDDH
                 {

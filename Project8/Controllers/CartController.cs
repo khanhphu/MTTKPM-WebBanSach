@@ -8,6 +8,7 @@ using WebBanSach.Models.Process;
 using WebBanSach.Models;
 using Newtonsoft.Json;
 using Project8.Models.Data;
+using System.Web.UI.WebControls;
 
 namespace WebBanSach.Controllers
 {
@@ -17,10 +18,7 @@ namespace WebBanSach.Controllers
 
         private readonly BSDBContext db;
         private readonly IOrderFactory _orderFactory;
-        //public CartController()
-        //{
-        //    db = new BSDBContext();
-        //}
+       
         public CartController(BSDBContext db, IOrderFactory orderFactory)
         {
             this.db = db;
@@ -28,13 +26,7 @@ namespace WebBanSach.Controllers
         }
 
 
-//         BSDBContext db = BSDBContext.Instance;
-// >>>>>>> master
 
-//         private const string CartSession = "CartSession";
-
-
-        // GET: /Cart/Index
         public ActionResult Index()
         {
             var cart = GetCartFromSession();
@@ -66,10 +58,10 @@ namespace WebBanSach.Controllers
 
             SaveCartToSession(cart);
             var total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
-            return Json(new { success = true, total = total });
+            var itemCount = cart.Count; 
+            return Json(new { success = true, total = total, itemCount=itemCount });
         }
 
-        // POST: /Cart/Update
         [HttpPost]
         public JsonResult Update(int id, int quantity)
         {
@@ -83,11 +75,11 @@ namespace WebBanSach.Controllers
 
             if (quantity <= 0)
             {
-                cart.Remove(cartItem); // Remove if quantity is 0 or less
+                cart.Remove(cartItem); //xóa khỏi giỏ hàng nếu sl=0
             }
             else
             {
-                cartItem.Quantity = quantity; // Update quantity
+                cartItem.Quantity = quantity;
             }
 
             SaveCartToSession(cart);
@@ -121,13 +113,6 @@ namespace WebBanSach.Controllers
             return Json(new { success = true, total = 0 });
         }
 
-        //// GET: /Cart/Payment
-        //public ActionResult Payment()
-        //{
-
-        //    // Add payment logic here
-        //    return View(cart);
-        //}
         public ActionResult CartHeader()
         {
             var cart = GetCartFromSession();
@@ -140,7 +125,6 @@ namespace WebBanSach.Controllers
             return PartialView(list);
         }
 
-        // Helper methods for session handling
         private List<CartModel> GetCartFromSession()
         {
             var cartJson = Session["Cart"] as string;
@@ -181,11 +165,11 @@ namespace WebBanSach.Controllers
 
 
 
-        private int TaoMaDDH()
-        {
-            int r = (from ddh in db.DonDatHangs orderby ddh.MaDDH descending select ddh.MaDDH).First();
-            return r + 1;
-        }
+        //private int TaoMaDDH()
+        //{
+        //    int r = (from ddh in db.DonDatHangs orderby ddh.MaDDH descending select ddh.MaDDH).First();
+        //    return r + 1;
+        //}
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -206,7 +190,7 @@ namespace WebBanSach.Controllers
                     return RedirectToAction("Index");
                 }
 
-                var list = cart; // Already a List<CartModel>
+                var list = cart; 
                 var sl = list.Sum(x => x.Quantity);
                 decimal? total = list.Sum(x => x.Total);
                 ViewBag.Quantity = sl;
@@ -223,16 +207,15 @@ namespace WebBanSach.Controllers
             var cart = GetCartFromSession();
             if (cart == null || !cart.Any())
             {
-                return RedirectToAction("Index"); // Cart empty, redirect to cart view
+                return RedirectToAction("Index"); 
             }
 
             try
             {
                
                 // Create order using factory
-                var order = await _orderFactory.CreateOrderAsync(cart, MaKH); // Correct usage
-                order.ThanhToan = 1; // Paid (adjust based on your logic)                                                                          // MaDDH is auto-incremented by DB, no need for TaoMaDDH()
-                // Update stock
+                var order = await _orderFactory.CreateOrderAsync(cart, MaKH); 
+                order.ThanhToan = 1;                                                                       
                 foreach (var item in order.ChiTietDDHs)
                 {
                     var book = db.Saches.Find(item.MaSach);
@@ -242,8 +225,12 @@ namespace WebBanSach.Controllers
                 // Save to database
                 db.DonDatHangs.Add(order);
                 db.SaveChanges();
+                //xoa sach da mua trong gio hang
+                var purchasedId=order.ChiTietDDHs.Select(d=> d.MaSach).ToList();
+                cart.RemoveAll(item => purchasedId.Contains(item.sach.MaSach));
+                SaveCartToSession(cart);
+                //chuyen den trang thanh toan thanh cong
 
-                Session[CartSession] = null; // Clear cart
                 return Redirect("/Cart/Success");
             }
             catch (Exception ex)
@@ -277,19 +264,13 @@ namespace WebBanSach.Controllers
         }
         public JsonResult loadOrder()
         {
-            //if (id!=null)
-            //{
+            
             db.Configuration.ProxyCreationEnabled = false;
             var donDatHang = db.DonDatHangs.ToList();
 
             return Json(new { data = donDatHang }
                 , JsonRequestBehavior.AllowGet);
-            //}
-            //else
-            //{
-            //    List<DonDatHang> donDatHang = db.DonDatHangs.Where(p => p.MaKH == UserController.khachhangstatic.MaKH).ToList();
-            //    return Json(donDatHang, JsonRequestBehavior.AllowGet);
-            //}
+          
         }
     }
 }

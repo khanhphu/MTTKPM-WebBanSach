@@ -1,4 +1,4 @@
-﻿@model List<WebBanSach.Models.CartModel>
+﻿﻿@model List<WebBanSach.Models.CartModel>
 
 @{
     ViewBag.Title = "Thanh toán";
@@ -26,14 +26,15 @@
                         <tr>
                             <td>@item.sach.TenSach</td>
                             <td>@item.Quantity</td>
-                            <td>@item.sach.GiaBan.GetValueOrDefault(0).ToString("C0",culture)</td>
+                            <td>@item.sach.GiaBan.GetValueOrDefault(0).ToString("C0", culture)</td>
                             <td>@item.Total.GetValueOrDefault(0).ToString("C0", culture)</td>
                         </tr>
                     }
                 </tbody>
             </table>
             <p>Tổng số lượng: @ViewBag.Quantity</p>
-           <p>Tổng tiền: @ViewBag.Total.ToString("C0", culture)
+            <p>
+                Tổng tiền: @ViewBag.Total.ToString("C0", culture)
             </p>
             <button type="submit" class="btn btn-success">Xác nhận thanh toán</button>
         </form>

@@ -4,80 +4,87 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <h2 style="margin-bottom: 20px;">Giỏ hàng của bạn</h2>
+<div class="container my-5">
+    <h2 class="mb-4 text-center text-uppercase font-weight-bold">Giỏ hàng của bạn</h2>
 
-    @if (Model.Count > 0)
+    @if (Model.Any())
     {
-        <table id="cart" class="table table-hover table-condensed table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th style="width:50%">Sản phẩm</th>
-                    <th style="width:15%">Giá</th>
-                    <th style="width:10%">Số lượng</th>
-                    <th style="width:20%" class="text-center">Thành tiền</th>
-                    <th style="width:5%"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr data-id="@item.sach.MaSach">
-                        <td data-th="Product">
-                            <div class="row align-items-center">
-                                <div class="col-sm-2 hidden-xs">
-                                    <img src="~/images/@item.sach.AnhBia" alt="@item.sach.TenSach" class="img-responsive img-thumbnail" style="max-height: 80px;" />
+        <div class="table-responsive">
+            <table id="cart" class="table table-hover table-bordered shadow-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" style="width: 50%;">Sản phẩm</th>
+                        <th scope="col" style="width: 15%;">Giá</th>
+                        <th scope="col" style="width: 10%;">Số lượng</th>
+                        <th scope="col" style="width: 20%;" class="text-center">Thành tiền</th>
+                        <th scope="col" style="width: 5%;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-id="@item.sach.MaSach">
+                            <td data-th="Product">
+                                <div class="row align-items-center">
+                                    <div class="col-3 col-md-2">
+                                        <img src="~/images/@item.sach.AnhBia" alt="@item.sach.TenSach" class="img-fluid img-thumbnail" style="max-height: 100px;" />
+                                    </div>
+                                    <div class="col-9 col-md-10">
+                                        <h5 class="mb-0 font-weight-semibold">@item.sach.TenSach</h5>
+                                    </div>
                                 </div>
-                                <div class="col-sm-10">
-                                    <h4 class="nomargin">@item.sach.TenSach</h4>
-                                </div>
-                            </div>
-                        </td>
-                        <td data-th="Price">@item.sach.GiaBan.GetValueOrDefault(0).ToString("N0") VND</td>
-                        <td data-th="Quantity">
-                            <input type="number" class="form-control txtQuantity" data-id="@item.sach.MaSach" value="@item.Quantity" min="0" step="1" style="width: 80px; text-align: center;">
-                        </td>
-                        <td data-th="Subtotal" class="text-center">@((item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity).ToString("N0")) VND</td>
-                        <td class="actions text-center">
-                            <button class="btn btn-danger btn-sm btn-delete" data-id="@item.sach.MaSach">
-                                <i class="fa fa-trash-o"></i>
+                            </td>
+                            <td data-th="Price" class="align-middle">@item.sach.GiaBan.GetValueOrDefault(0).ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ₫</td>
+                            <td data-th="Quantity" class="align-middle">
+                                <input type="number" class="form-control txtQuantity" data-id="@item.sach.MaSach" value="@item.Quantity" min="0" step="1" style="width: 80px; text-align: center;" />
+                            </td>
+                            <td data-th="Subtotal" class="text-center align-middle">@((item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity).ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) ₫</td>
+                            <td class="text-center align-middle">
+                                <button class="btn btn-danger btn-sm btn-delete" data-id="@item.sach.MaSach" title="Xóa sản phẩm">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="align-middle">
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-warning mr-2">
+                                <i class="fa fa-angle-left mr-1"></i> Tiếp tục mua hàng
+                            </a>
+                            <button id="btnUpdate" class="btn btn-outline-info btn-sm mr-2">
+                                <i class="fa fa-refresh mr-1"></i> Cập nhật
+                            </button>
+                            <button id="btnDeleteAll" class="btn btn-outline-danger btn-sm">
+                                <i class="fa fa-trash-o mr-1"></i> Xóa tất cả
                             </button>
                         </td>
+                        <td colspan="1"></td>
+                        <td class="text-center align-middle">
+                            <strong id="totalAmount">Tổng cộng: @(ViewBag.Total?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong>                        </td>
+                        <td class="align-middle">
+                            <a href="@Url.Action("Payment", "Cart")" class="btn btn-success btn-block">
+                                Thanh toán <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </td>
                     </tr>
-                }
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2">
-                        <a href="/Home/" class="btn btn-warning"><i class="fa fa-angle-left"></i> Tiếp tục mua hàng</a>
-                        <button id="btnUpdate" class="btn btn-info btn-sm"><i class="fa fa-refresh"></i> Cập nhật</button>
-                        <button id="btnDeleteAll" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> Xóa tất cả</button>
-                    </td>
-                    <td colspan="1" class="hidden-xs"></td>
-                    <td class="text-center hidden-xs">
-                        <strong id="totalAmount">Tổng cộng: @String.Format("{0:N0}", ViewBag.Total) VND</strong>
-                    </td>
-                    <td>
-                        <a href="/Cart/Payment" class="btn btn-success btn-block">Thanh toán <i class="fa fa-angle-right"></i></a>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
+                </tfoot>
+            </table>
+        </div>
     }
     else
     {
-        <div class="empty-cart-message" @(Model.Count > 0 ? "style=\"display:none;\"" : "")>
-            <div class="alert alert-danger" role="alert">
-                Chưa có sản phẩm nào trong giỏ hàng
+        <div class="empty-cart-message text-center py-5">
+            <div class="alert alert-warning shadow-sm" role="alert">
+                <i class="fa fa-exclamation-circle mr-2"></i> Chưa có sản phẩm nào trong giỏ hàng
             </div>
-            <a href="/Home/" class="btn btn-warning" style="margin-top: 20px;">
-                <i class="fa fa-angle-left"></i> Tiếp tục mua hàng
+            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-warning mt-3">
+                <i class="fa fa-angle-left mr-2"></i> Tiếp tục mua hàng
             </a>
         </div>
     }
 </div>
-
-
 
 @section jsFooter {
     <script src="/Content/Client/js/controller/cartController.js"></script>
@@ -88,7 +95,7 @@
                 var $row = $(this).closest('tr');
                 var maSach = $(this).data('id');
                 var quantity = parseInt($(this).val()) || 0;
-                var price = parseFloat($row.find('td[data-th="Price"]').text().replace(' VND', '').replace(/,/g, ''));
+                var price = parseFloat($row.find('td[data-th="Price"]').text().replace(' ₫', '').replace(/,/g, ''));
 
                 if (quantity <= 0) {
                     $.post('/Cart/Remove', { id: maSach }, function (response) {
@@ -103,7 +110,7 @@
                     $.post('/Cart/Update', { id: maSach, quantity: quantity }, function (response) {
                         if (response.success) {
                             var subtotal = price * quantity;
-                            $row.find('td[data-th="Subtotal"]').text(subtotal.toLocaleString('vi-VN') + ' VND');
+                            $row.find('td[data-th="Subtotal"]').text(subtotal.toLocaleString('vi-VN') + ' ₫');
                             updateCartUI(response);
                         } else {
                             alert(response.message);
@@ -142,7 +149,7 @@
 
             // Update UI helper
             function updateCartUI(response) {
-                $('#totalAmount').text('Tổng cộng: ' + response.total.toLocaleString('vi-VN') + ' VND');
+                $('#totalAmount').text('Tổng cộng: ' + response.total.toLocaleString('vi-VN') + ' ₫');
                 if (response.itemCount === 0) {
                     $('#cart').hide();
                     $('.empty-cart-message').show();
@@ -163,11 +170,39 @@
         vertical-align: middle !important;
     }
 
-    .nomargin {
-        margin: 0;
+    .font-weight-semibold {
+        font-weight: 600;
     }
 
-    .btn-sm {
-        margin-right: 5px;
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-outline-warning, .btn-outline-info, .btn-outline-danger {
+        border-width: 2px;
+    }
+
+    .empty-cart-message {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .alert {
+        font-size: 1.1rem;
+    }
+
+    @@media (max-width: 768px) {
+        .table-responsive {
+            border: none;
+        }
+        .btn-block {
+            width: 100%;
+            margin-top: 10px;
+        }
     }
 </style>
