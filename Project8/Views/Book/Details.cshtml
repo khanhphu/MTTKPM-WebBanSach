@@ -41,8 +41,11 @@
                 $.post('/Cart/Add', { id: maSach, quantity: quantity }, function (response) {
                     if (response.success) {
                         alert('Đã thêm "' + '@Model.TenSach' + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
-                        // Optional: Redirect to cart
-                        // window.location.href = '/Cart/Index';
+                        //update cart count - after click mua 
+                        var cartCount = response.cartCount;
+                        $('.cart-count').text(response.itemCount)
+                            .removeClass('badge-secondary')
+                            .addClass(response.itemCount > 0 ? 'badge-primary' : 'badge-secondary')
                     } else {
                         alert(response.message);
                     }

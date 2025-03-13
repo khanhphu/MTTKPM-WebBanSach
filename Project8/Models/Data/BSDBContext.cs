@@ -9,7 +9,7 @@ namespace WebBanSach.Models.Data
     {
         private static BSDBContext _instance;
         private static readonly object _lock = new object();
-        private BSDBContext(): base("name=BSBD2")
+        public BSDBContext(): base("name=BSBD2")
         {
         }
 
