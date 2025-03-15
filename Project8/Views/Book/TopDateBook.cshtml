@@ -15,9 +15,26 @@
                 </h4>
                 <a class="btn btn-warning add-to-cart" data-id="@item.MaSach" data-name="@item.TenSach">Mua</a>
 
-                @if (item.GiaBan > 0)
+                @*@if (item.GiaBan > 0)
                 {
                     <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
+                }
+                else
+                {
+                    <h4 class="pull-right" style="color:red;">Liên hệ</h4>
+                }*@
+
+                @if (item.GiaBan.HasValue && item.GiaBan > 0)
+                {
+                    <h4 class="pull-right" style="color:red;">
+                        <span style="text-decoration: line-through; color: gray;">
+                            Giá gốc: @(item.GiaBanGoc.HasValue ? item.GiaBanGoc.Value.ToString("N0") + " VND" : "Chưa có giá")
+                        </span>
+                        <br />
+                        <span style="font-weight: bold;">
+                            Giá chỉ còn: @item.GiaBan.Value.ToString("N0") VND
+                        </span>
+                    </h4>
                 }
                 else
                 {

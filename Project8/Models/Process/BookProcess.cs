@@ -6,7 +6,7 @@ using System.Web;
 
 namespace WebBanSach.Models.Process
 {
-    public class BookProcess
+    public class BookProcess : IBookProcess
     {
         //Khởi tạo biến dữ liệu : db
         BSDBContext db = null;

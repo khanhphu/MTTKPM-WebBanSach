@@ -12,9 +12,25 @@
                     <a title="@item.TenSach" href="/Book/Details/@item.MaSach" style="color:#087BB0;">@(item.TenSach.Length > 26 ? item.TenSach.Substring(0, 22) + "..." : item.TenSach)</a>
                 </h4>
                 <a style="color:black" class="btn btn-warning" href="/Cart/Add/?id=@item.MaSach&quantity=1">Mua</a>
-                @if (item.GiaBan > 0)
+                @*@if (item.GiaBan > 0)
+        {
+            <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
+        }
+        else
+        {
+            <h4 class="pull-right" style="color:red;">Liên hệ</h4>
+        }*@
+                @if (item.GiaBan.HasValue && item.GiaBan > 0)
                 {
-                    <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
+                    <h4 class="pull-right" style="color:red;">
+                        <span style="text-decoration: line-through; color: gray;">
+                            Giá gốc: @(item.GiaBanGoc.HasValue ? item.GiaBanGoc.Value.ToString("N0") + " VND" : "Chưa có giá")
+                        </span>
+                        <br />
+                        <span style="font-weight: bold;">
+                            Giá chỉ còn: @item.GiaBan.Value.ToString("N0") VND
+                        </span>
+                    </h4>
                 }
                 else
                 {

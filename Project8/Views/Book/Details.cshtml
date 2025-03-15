@@ -16,7 +16,25 @@
         <p>@Model.Mota</p>
         <hr />
         <p>Tình trạng: @(Model.SoLuongTon > 0 ? "Còn hàng" : "Liên hệ")</p>
-        <h3>Giá: @(Model.GiaBan > 0 ? Model.GiaBan.Value.ToString("N0") + " VND" : "Liên hệ")</h3>
+        @*<h3>Giá: @(Model.GiaBan > 0 ? Model.GiaBan.Value.ToString("N0") + " VND" : "Liên hệ")</h3>*@
+        <h3>
+            @if (Model.GiaBanGoc > Model.GiaBan)
+            {
+                <span style="text-decoration: line-through; color: gray;">
+                    Giá gốc: @Model.GiaBanGoc.Value.ToString("N0") VND
+                </span>
+                <br />
+                <span style="color: red; font-weight: bold;">
+                    Giá chỉ còn: @Model.GiaBan.Value.ToString("N0") VND
+                </span>
+            }
+            else
+            {
+                <span style="color: red; font-weight: bold;">
+                    Giá: @(Model.GiaBan > 0 ? Model.GiaBan.Value.ToString("N0") + " VND" : "Liên hệ")
+                </span>
+            }
+        </h3>
         <br />
         <p>
             <a href="#" class="btn btn-warning btn-large add-to-cart" data-id="@Model.MaSach">THÊM VÀO GIỎ HÀNG</a>

@@ -198,8 +198,11 @@
     <Compile Include="Models\IPN.cs" />
     <Compile Include="Models\Process\AdminProcess.cs" />
     <Compile Include="Models\Process\BookProcess.cs" />
+    <Compile Include="Models\Process\BookProcessDecorator.cs" />
+    <Compile Include="Models\Process\DiscountBook.cs" />
     <Compile Include="Models\Process\HomeProcess.cs" />
     <Compile Include="Models\MoMoSecurity.cs" />
+    <Compile Include="Models\Process\IBookProcess.cs" />
     <Compile Include="Models\Process\OderDetailProcess.cs" />
     <Compile Include="Models\Process\OrderProcess.cs" />
     <Compile Include="Models\PaymentRequest.cs" />
