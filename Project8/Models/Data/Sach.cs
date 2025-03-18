@@ -41,6 +41,10 @@
         [Display(Name = "Giá bán")]
         public decimal? GiaBan { get; set; }
 
+        // Thêm thuộc tính lưu giá gốc, không mapping vào DB
+        [NotMapped]
+        public decimal? GiaBanGoc { get; set; }
+
         [StringLength(500)]
         [Display(Name = "Mô tả")]
         public string Mota { get; set; }
