@@ -1,0 +1,74 @@
+﻿@model WebBanSach.Models.Data.ChainOfResponsitory.SachFilter
+@using WebBanSach.Models.Data.ChainOfResponsitory
+@using WebBanSach.Models.Data 
+
+<div class="filter-panel" style="padding: 10px;">
+    <h4 style="color: #F5F6F0; text-align: center;">Lọc sách</h4>
+    @using (Html.BeginForm("Filter", "Book", FormMethod.Get, new { id = "filter-Form" }))
+    {
+        <!-- Radio button cho thể loại -->
+        <div class="form-group">
+            <label style="color: #F5F6F0;">Thể loại:</label><br />
+            @{
+                var theLoaiList = ViewBag.TheLoaiList as List<WebBanSach.Models.Data.TheLoai> ?? new List<WebBanSach.Models.Data.TheLoai>();
+                <p style="color: #F5F6F0;">Số lượng thể loại: @theLoaiList.Count</p>
+            }
+            @Html.DropDownListFor(m => m.MaLoai, new SelectList(theLoaiList, "MaLoai", "TenLoai", Model?.MaLoai), "-- Chọn thể loại --", new { @class = "form-control" })
+        </div>
+
+        <!-- Radio button cho giá -->
+        <div class="form-group">
+            <label style="color: #F5F6F0;">Giá bán:</label><br />
+            @{
+                var giaRanges = new Dictionary<string, decimal>
+                {
+                    { "Dưới 100k", 100000 },
+                    { "Dưới 200k", 200000 },
+                    { "Trên 200k", 9999999 }
+                };
+            }
+            @foreach (var range in giaRanges)
+            {
+                <label class="radio-inline" style="color: #F5F6F0;">
+                    <input type="radio" name="GiaBanMax" value="@range.Value" @(Model != null && Model.GiaBanMax == range.Value ? "checked" : "") />
+                    @range.Key
+                </label><br />
+            }
+        </div>
+
+        <!-- Các trường mới -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.TenTG, "Tác giả:", new { style = "color: #F5F6F0;" })
+            @Html.TextBoxFor(m => m.TenTG, new { @class = "form-control", type = "text" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SoLuongTon, "Số lượng tồn tối thiểu:", new { style = "color: #F5F6F0;" })
+            @Html.TextBoxFor(m => m.SoLuongTon, new { @class = "form-control", type = "number" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.NgayCapNhatStart, "Ngày cập nhật từ:", new { style = "color: #F5F6F0;" })
+            @Html.TextBoxFor(m => m.NgayCapNhatStart, new { @class = "form-control", type = "date" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.NgayCapNhatEnd, "Ngày cập nhật đến:", new { style = "color: #F5F6F0;" })
+            @Html.TextBoxFor(m => m.NgayCapNhatEnd, new { @class = "form-control", type = "date" })
+        </div>
+
+        <!-- Nút Áp dụng lọc và Xóa bộ lọc -->
+        <div class="form-group d-flex">
+            <button type="submit" class="btn btn-primary flex-fill me-2">Áp dụng lọc</button>
+            <button type="button" id="clear-filter-btn" class="btn btn-secondary flex-fill">Xóa bộ lọc</button>
+        </div>
+    }
+</div>
+<script>
+    // Xử lý sự kiện nhấn nút "Xóa bộ lọc"
+    document.getElementById("clear-filter-btn").addEventListener("click", function () {
+        // Đặt lại tất cả các trường trong form
+        const form = document.getElementById("filter-Form");
+        form.reset(); // Xóa giá trị của tất cả các input, select, radio
+
+        // Chuyển hướng về trang Filter không có tham số
+        window.location.href = "@Url.Action("Filter", "Book")";
+    });
+</script>
