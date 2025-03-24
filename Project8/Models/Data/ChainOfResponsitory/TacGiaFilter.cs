@@ -28,12 +28,12 @@ namespace WebBanSach.Models.Data.ChainOfResponsitory
                     .Select(s => new
                     {
                         Sach = s,
-                       Distance = LevenshteinDistance(tenTG, s.TacGia.TenTG.ToLower())
+                        Distance = LevenshteinDistance(tenTG, s.TacGia.TenTG.ToLower())
                     })
                     .OrderBy(x => x.Distance) // Sắp xếp theo độ tương đồng (khoảng cách nhỏ nhất lên đầu)
                     .Select(x => x.Sach)
                     .ToList();
-             
+
 
                 sachQuery = sortedSachs.AsQueryable();
             }
