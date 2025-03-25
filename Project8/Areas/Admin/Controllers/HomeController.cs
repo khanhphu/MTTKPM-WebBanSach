@@ -7,6 +7,7 @@ using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using System.IO;
 using Project8.Areas.Admin.Code;
+using static WebBanSach.Models.Data.Sach;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
