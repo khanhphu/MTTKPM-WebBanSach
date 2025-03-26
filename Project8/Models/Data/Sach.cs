@@ -68,6 +68,7 @@ namespace WebBanSach.Models.Data
         public virtual TacGia TacGia { get; set; }
 
 
+
         public interface ISachBuilder
         {
             ISachBuilder SetMaLoai(int maLoai);
@@ -157,6 +158,9 @@ namespace WebBanSach.Models.Data
             {
                 return sach;
             }
+
         }
+
     }
 }
+
