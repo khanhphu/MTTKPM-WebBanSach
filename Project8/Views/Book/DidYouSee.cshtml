@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebBanSach.Models.Data.Sach>
+﻿﻿@model IEnumerable<WebBanSach.Models.Data.Sach>
 
 @foreach (var item in Model)
 {
@@ -11,15 +11,15 @@
                 <h4>
                     <a title="@item.TenSach" href="/Book/Details/@item.MaSach" style="color:#087BB0;">@(item.TenSach.Length > 26 ? item.TenSach.Substring(0, 22) + "..." : item.TenSach)</a>
                 </h4>
-                <a style="color:black" class="btn btn-warning" href="/Cart/Add/?id=@item.MaSach&quantity=1">Mua</a>
+                <a class="btn btn-warning add-to-cart" data-id="@item.MaSach" data-name="@item.TenSach">Mua</a>
                 @*@if (item.GiaBan > 0)
-        {
-            <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
-        }
-        else
-        {
-            <h4 class="pull-right" style="color:red;">Liên hệ</h4>
-        }*@
+                    {
+                        <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
+                    }
+                    else
+                    {
+                        <h4 class="pull-right" style="color:red;">Liên hệ</h4>
+                    }*@
                 @if (item.GiaBan.HasValue && item.GiaBan > 0)
                 {
                     <h4 class="pull-right" style="color:red;">
@@ -40,4 +40,48 @@
         </div>
     </div>
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+    if (typeof jQuery === 'undefined') {
+        console.error('jQuery failed to load!');
+        alert('Không thể tải jQuery. Vui lòng kiểm tra kết nối.');
+    } else {
+        console.log('jQuery loaded successfully');
+    }
 
+    $(document).ready(function () {
+        console.log('Document ready. Found .add-to-cart buttons:', $('.add-to-cart').length);
+
+        $(document).on('click', '.add-to-cart', function (e) {
+            e.preventDefault();
+            console.log('Add to cart clicked');
+
+            var $button = $(this);
+            var maSach = $button.data('id');
+            var bookName = $button.data('name');
+            var quantity = 1;
+
+            console.log('MaSach:', maSach, 'BookName:', bookName);
+
+            if (!maSach) {
+                alert('Lỗi: Không tìm thấy mã sách');
+                return;
+            }
+
+            $.post('/Cart/Add', { id: maSach, quantity: quantity })
+                .done(function (response) {
+                    console.log('AJAX Success:', response);
+                    if (response.success) {
+                        alert('Đã thêm "' + bookName + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
+                        window.location.href = '/Cart/Index';
+                    } else {
+                        alert(response.message || 'Lỗi không xác định');
+                    }
+                })
+                .fail(function (xhr, status, error) {
+                    console.error('AJAX Error:', status, error, xhr.responseText);
+                    alert('Lỗi kết nối đến server: ' + error);
+                });
+        });
+    });
+</script>

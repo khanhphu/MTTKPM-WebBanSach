@@ -8,6 +8,9 @@ using WebBanSach.Models.Process;
 using PagedList;
 using PagedList.Mvc;
 
+using WebBanSach.Models.Data.Builder;
+
+
 namespace WebBanSach.Controllers
 {
     public class BookController : Controller
@@ -93,5 +96,51 @@ namespace WebBanSach.Controllers
 
             return View(books);
         }
+
+
+
+        //Filter Sach
+        [HttpGet]
+        public ActionResult Filter(SachFilter filter = null)
+        {
+            //lay ds sach tu csdl
+            var sachList=db.Saches.AsNoTracking().ToList();
+            var filterBuilder = new SachFilterBuilder();
+            if (filter != null)
+            {
+                filterBuilder.TheLoaiFilter(filter.MaLoai)
+                             .GiaBanFilter(filter.GiaBan)
+                             .TacgiaFilter(filter.TenTG)
+                             .NXBFilter(filter.TenNXB)
+                             .NgayCapNhatStartFilter(filter.NgayCapNhatStart)
+                             .NgayCapNhatEndFilter(filter.NgayCapNhatEnd);
+            }
+            var sachFilter=filterBuilder.Build();
+            //ap dung bo loc vao dsach sach lay tu csdl
+            var filteredSach=sachFilter.Apply(sachList);
+            // Chuẩn bị dữ liệu cho view
+            var theLoaiList = db.TheLoais.AsNoTracking().ToList();
+            ViewBag.TheLoaiList = theLoaiList;
+            ViewBag.filterResult = filter ?? new SachFilter();
+
+            return View("Filter", filteredSach);
+        }
+
+        // Action mới để trả về panel lọc
+        [HttpGet]
+        public ActionResult GetFilterPanel()
+        {
+            try
+            {
+                ViewBag.TheLoaiList = db.TheLoais.ToList();
+                var filter = new SachFilter();
+                return PartialView("_FilterPanel", filter);
+            }
+            catch (Exception ex)
+            {
+                return Content("Lỗi: " + ex.Message);
+            }
+        }
+
     }
 }

@@ -41,6 +41,10 @@ namespace WebBanSach.Models.Data
         [Display(Name = "Giá bán")]
         public decimal? GiaBan { get; set; }
 
+        // Thêm thuộc tính lưu giá gốc, không mapping vào DB
+        [NotMapped]
+        public decimal? GiaBanGoc { get; set; }
+
         [StringLength(500)]
         [Display(Name = "Mô tả")]
         public string Mota { get; set; }
@@ -64,103 +68,10 @@ namespace WebBanSach.Models.Data
         public virtual ICollection<ChiTietDDH> ChiTietDDHs { get; set; }
 
         public virtual NhaXuatBan NhaXuatBan { get; set; }
+
         public virtual TheLoai TheLoai { get; set; }
+
         public virtual TacGia TacGia { get; set; }
-
-
-
-        public interface ISachBuilder
-        {
-            ISachBuilder SetMaLoai(int maLoai);
-            ISachBuilder SetMaNXB(int maNXB);
-            ISachBuilder SetMaTG(int maTG);
-            ISachBuilder SetTenSach(string tenSach);
-            ISachBuilder SetGiaBan(decimal? giaBan);
-            ISachBuilder SetMota(string mota);
-            ISachBuilder SetNguoiDich(string nguoiDich);
-            ISachBuilder SetAnhBia(string anhBia);
-            ISachBuilder SetNgayCapNhat(DateTime? ngayCapNhat);
-            ISachBuilder SetSoLuongTon(int? soLuongTon);
-            Sach Build();
-        }
-
-
-        public class SachBuilder : ISachBuilder
-        {
-            private Sach sach;
-
-            public SachBuilder()
-            {
-                sach = new Sach();
-            }
-
-            public ISachBuilder SetMaLoai(int maLoai)
-            {
-                sach.MaLoai = maLoai;
-                return this;
-            }
-
-            public ISachBuilder SetMaNXB(int maNXB)
-            {
-                sach.MaNXB = maNXB;
-                return this;
-            }
-
-            public ISachBuilder SetMaTG(int maTG)
-            {
-                sach.MaTG = maTG;
-                return this;
-            }
-
-            public ISachBuilder SetTenSach(string tenSach)
-            {
-                sach.TenSach = tenSach;
-                return this;
-            }
-
-            public ISachBuilder SetGiaBan(decimal? giaBan)
-            {
-                sach.GiaBan = giaBan;
-                return this;
-            }
-
-            public ISachBuilder SetMota(string mota)
-            {
-                sach.Mota = mota;
-                return this;
-            }
-
-            public ISachBuilder SetNguoiDich(string nguoiDich)
-            {
-                sach.NguoiDich = nguoiDich;
-                return this;
-            }
-
-            public ISachBuilder SetAnhBia(string anhBia)
-            {
-                sach.AnhBia = anhBia;
-                return this;
-            }
-
-            public ISachBuilder SetNgayCapNhat(DateTime? ngayCapNhat)
-            {
-                sach.NgayCapNhat = ngayCapNhat;
-                return this;
-            }
-
-            public ISachBuilder SetSoLuongTon(int? soLuongTon)
-            {
-                sach.SoLuongTon = soLuongTon;
-                return this;
-            }
-
-            public Sach Build()
-            {
-                return sach;
-            }
-
-        }
 
     }
 }
-

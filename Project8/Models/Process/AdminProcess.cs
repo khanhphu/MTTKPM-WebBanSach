@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using WebBanSach.Models.Data;
-using static WebBanSach.Models.Data.Sach;
 
 namespace WebBanSach.Models.Process
 {
@@ -36,7 +35,7 @@ namespace WebBanSach.Models.Process
             {
                 if (result.MatKhau == password)
                 {
-                    
+
                     return 1;
                 }
                 else
@@ -354,18 +353,17 @@ namespace WebBanSach.Models.Process
             return db.Saches.OrderBy(x => x.MaSach).ToList();
         }
 
-       /// <summary>
-/// hàm thêm sách
-/// </summary>
-/// <param name="entity">Sach</param>
-/// <returns>int</returns>
-public int InsertBook(SachBuilder builder)
-{
-    Sach entity = builder.Build(); // Dùng Builder để tạo đối tượng Sach
-    db.Saches.Add(entity);
-    db.SaveChanges();
-    return entity.MaSach;
-}
+        /// <summary>
+        /// hàm thêm sách
+        /// </summary>
+        /// <param name="entity">Sach</param>
+        /// <returns>int</returns>
+        public int InsertBook(Sach entity)
+        {
+            db.Saches.Add(entity);
+            db.SaveChanges();
+            return entity.MaSach;
+        }
 
         /// <summary>
         /// hàm cập nhật sách

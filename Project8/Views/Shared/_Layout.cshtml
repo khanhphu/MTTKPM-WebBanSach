@@ -6,25 +6,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="BookStore">
     <meta name="author" content="VHP">
-    <title>Website bán sách</title>
-    <!-- Bootstrap Core CSS -->
+    <title>Website bán sách - @ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
     <link href="/Content/Client/css/bootstrap.css" rel="stylesheet" />
     <!-- Custom CSS -->
     <link href="/Content/Client/css/shop-homepage.css" rel="stylesheet" />
-    <!-- HTML5 Shim and Respond.js IE8 support -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <link href="/Content/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
-    <!-- DataTables -->
-    <link href="/Content/Client/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="/Content/Client/css/footer.css" rel="stylesheet" />
+    <link href="/Content/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/Content/Client/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <!-- Inline Styles -->
+    <style>
+        body {
+            background-color: #F5F6F0; /* Light cream, paper-like */
+            color: #333333; /* Dark gray text */
+        }
+
+        .navbar {
+            background: #2F4F4F; /* Dark slate gray */
+            border: none;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav > li > a {
+            color: #F5F6F0; /* Light cream text */
+            font-size: 18px;
+            padding: 15px 20px;
+            transition: all 0.3s;
+        }
+
+            .navbar-nav > li > a:hover {
+                color: #DAA520; /* Goldenrod on hover */
+                background: #3C6767; /* Slightly lighter slate */
+            }
+
+        .input-group {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px auto;
+        }
+
+        .form-control {
+            border-radius: 10px 10px 10px 10px;
+            background: #FFFFFF; /* White for input */
+            border: 1px solid #2F4F4F;
+        }
+
+        .input-group-btn .btn {
+            border-radius: 0 20px 20px 0;
+            background: #8B4513; /* Saddle brown */
+            color: #F5F6F0; /* Light cream */
+            border: none;
+        }
+
+            .input-group-btn .btn:hover {
+                background: #DAA520; /* Goldenrod */
+            }
+
+        .footer {
+            background: #2F4F4F; /* Dark slate gray */
+            border-radius: 20px 20px 0 0;
+            padding: 30px 0;
+            color: #F5F6F0; /* Light cream */
+        }
+
+            .footer h3 {
+                font-size: 20px;
+                margin-bottom: 15px;
+                color: #DAA520; /* Goldenrod for headers */
+            }
+
+            .footer ul {
+                list-style: none;
+                padding: 0;
+            }
+
+                .footer ul li {
+                    margin-bottom: 10px;
+                }
+
+                    .footer ul li a {
+                        color: #F5F6F0; /* Light cream */
+                        font-size: 16px;
+                        text-decoration: none;
+                    }
+
+                        .footer ul li a:hover {
+                            color: #DAA520; /* Goldenrod */
+                        }
+
+        .footer-social li {
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+            .footer-social li a {
+                color: #F5F6F0;
+            }
+
+                .footer-social li a:hover {
+                    color: #DAA520;
+                }
+
+        .container-fluid {
+            padding: 0;
+        }
+
+        hr {
+            border-color: #8B4513; /* Saddle brown */
+            margin: 40px 0;
+        }
+
+        @@media (max-width: 768px) {
+            .navbar-nav {
+                text-align: center;
+            }
+
+            .input-group {
+                max-width: 100%;
+            }
+
+            .footer .col-xs-6, .footer .col-xs-3 {
+                margin-bottom: 20px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
-<body style="background-color: #F0F0F0; border-bottom: none;">
+<body>
     <!-- Navigation -->
-    <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/8722341.js"></script>
-    <nav style="background: #33FF99; border-radius: 0px 0px 30px 30px; border: none" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -36,22 +147,16 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/" style="font-size:25px; color:#525151;"><i class="fa fa-home" aria-hidden="true"></i> WEBBANSACH</a>
-                    </li>
-                    <li>
-                        <a href="/Home/Contact" style="color:#525151"><i class="fa fa-phone-square" aria-hidden="true" style="color:#525151"></i> Liên hệ</a>
-                    </li>
+                    <li><a href="/"><i class="fa fa-home"></i> WEBBANSACH</a></li>
+                    <li><a href="/Home/Contact"><i class="fa fa-phone-square"></i> Liên hệ</a></li>
                 </ul>
-                <div class="col-sm-3 col-md-3">
+                <div class="col-sm-3 col-md-3 pull-right">
                     @using (Html.BeginForm("SearchResult", "Home", FormMethod.Post, new { @class = "navbar-form", @role = "search" }))
                     {
                         <div class="input-group">
-                            @Html.TextBox("txtSearch", "", htmlAttributes: new { @class = "form-control", @placeholder = "Tìm kiếm sách...", @style = "width: 370px;background: #FAFAFA;border-radius: 40px;" })
+                            @Html.TextBox("txtSearch", "", new { @class = "form-control", @placeholder = "Tìm kiếm sách..." })
                             <span class="input-group-btn">
-                                <button style="background: #e658588c; border-radius: 40px;" class="btn btn-default" type="submit">
-                                    <span style="color:white">Tìm</span>
-                                </button>
+                                <button class="btn btn-default" type="submit">Tìm</button>
                             </span>
                         </div>
                     }
@@ -60,77 +165,84 @@
             </div>
         </div>
     </nav>
+
     <!-- Page Content -->
-    <div class="container">
+    <div class="container" style="margin-top: 70px;">
         @RenderBody()
     </div>
+
     <!-- Footer -->
-    <div class="container-fluid" style="padding-left:0px;padding-right:0px">
+    <div class="container-fluid">
         <hr>
         <footer>
-            <div style="background: #33FF99;border-radius: 39px 39px 0px 0px;" class="footer" id="footer">
+            <div class="footer" id="footer">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6">
-                            <h3 style="color:#515252;"> Trợ giúp </h3>
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+                            <h3>Trợ giúp</h3>
                             <ul>
-                                <li><a href="/Home/QuyDinh" style="color:#515252;font-size:1.6rem"> Qui định sử dụng </a></li>
-                                <li><a href="/Home/Thanhtoan" style="color:#515252;font-size:1.6rem"> Phương thức thanh toán </a></li>
-                                <li><a href="/Home/VanChuyen" style="color:#515252;font-size:1.6rem"> Phương thức vận chuyển </a></li>
+                                <li><a href="/Home/QuyDinh">Qui định sử dụng</a></li>
+                                <li><a href="/Home/Thanhtoan">Phương thức thanh toán</a></li>
+                                <li><a href="/Home/VanChuyen">Phương thức vận chuyển</a></li>
                             </ul>
                         </div>
-                        <div class="col-lg-3 col-md-2 col-sm-4 col-xs-6">
-                            <h3 style="color:#515252"> Hỗ trợ </h3>
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+                            <h3>Hỗ trợ</h3>
                             <ul>
-                                <li><a href="/Home/DoiTra" style="color:#515252;font-size:1.6rem"> Chính sách đổi trả </a></li>
-                                <li><a href="/Home/Help" style="color:#515252;font-size:1.6rem"> Các câu hỏi thường gặp </a></li>
+                                <li><a href="/Home/DoiTra">Chính sách đổi trả</a></li>
+                                <li><a href="/Home/Help">Các câu hỏi thường gặp</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-                            <h3 style="color:#515252"> Tài khoản </h3>
+                            <h3>Tài khoản</h3>
                             <ul>
-                                <li><a href="/User/Register" style="color:#515252;font-size:1.6rem"> Đăng ký thành viên</a></li>
+                                <li><a href="/User/Register">Đăng ký thành viên</a></li>
                             </ul>
                         </div>
-                        <div class="col-xs-3">
-                            <h3 style="color:#515252"> Follow Us </h3>
+                        <div class="col-lg-4 col-md-4 col-xs-12">
+                            <h3>Follow Us</h3>
                             <ul class="footer-social">
-                                <li><a rel="nofollow" href="https://www.youtube.com/" title="Youtube" target="_blank" style="color:#515252;font-size:1.6rem"><i class="fa fa-youtube-play"></i> Youtube</a></li>
-                                <li><a rel="nofollow" href="https://www.facebook.com/profile.php?id=100012552256951" title="Facebook" target="_blank" style="color:#515252;font-size:1.6rem"><i class="fa fa-facebook-square"></i> Facebook</a></li>
+                                <li><a href="https://www.youtube.com/" target="_blank"><i class="fa fa-youtube-play"></i> Youtube</a></li>
+                                <li><a href="#" target="_blank"><i class="fa fa-facebook-square"></i> Facebook</a></li>
                             </ul>
                             <div class="footer-apps">
-                                <a rel="nofollow" href="https://play.google.com/apps" target="_blank">
-                                    <img style="height: 35px" alt="Get it on Google Play" class="lazy" src="https://vcdn.tikicdn.com/assets/img/google-play.svg?v=1">
+                                <a href="https://play.google.com/apps" target="_blank">
+                                    <img style="height: 35px;" alt="Google Play" src="https://vcdn.tikicdn.com/assets/img/google-play.svg?v=1">
                                 </a>
-                                <a rel="nofollow" href="http://appstore.vn/home/" target="_blank">
-                                    <img style="height: 35px" class="lazy" src="https://vcdn.tikicdn.com/assets/img/app-store.svg?v=1">
+                                <a href="http://appstore.vn/home/" target="_blank">
+                                    <img style="height: 35px;" alt="App Store" src="https://vcdn.tikicdn.com/assets/img/app-store.svg?v=1">
                                 </a>
                             </div>
                         </div>
                     </div>
-                    <div class="container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; position: relative;">
-                        <div style="color:#515252;font-size:1.6rem">
-                            <p>© @DateTime.Now.Year - Web Nhóm 8 </p>
-                        </div>
-                        <div class="block" style="margin-left:710px;">
-                            <a href="https://hotro.tiki.vn/hc/vi/articles/115005575826" rel="noreferrer"><img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong-2.png" width="36" alt=""></a>
-                            <a href="http://online.gov.vn/HomePage/WebsiteDisplay.aspx?DocId=21201" rel="noreferrer"><img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong.svg" width="120" alt=""></a>
+                    <div class="row" style="margin-top: 20px; text-align: center;">
+                        <div class="col-xs-12">
+                            <p>© @DateTime.Now.Year - Web Nhóm 8</p>
+                            <div style="margin-top: 10px;">
+                                <a href="https://hotro.tiki.vn/hc/vi/articles/115005575826" rel="noreferrer">
+                                    <img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong-2.png" width="36" alt="">
+                                </a>
+                                <a href="http://online.gov.vn/HomePage/WebsiteDisplay.aspx?DocId=21201" rel="noreferrer">
+                                    <img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong.svg" width="120" alt="">
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </footer>
     </div>
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
     <script src="/Content/Client/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript">
+    @RenderSection("jsFooter", required: false)
+    <script>
         $(document).ready(function () {
             $('#thongBaoThanhCong').delay(3000).slideUp();
         });
     </script>
-    @RenderSection("jsFooter", required: false)
     @RenderSection("scripts", required: false)
 </body>
 </html>

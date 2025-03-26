@@ -28,17 +28,17 @@
                             </h4>
                             <a class="btn btn-warning" href="/Cart/Add/?id=@item.MaSach&quantity=1">Mua hàng</a>
                             @*@if (item.GiaBan > 0)
-        {
-            //<h4 class="pull-right" style="color:red;">@item.GiaBan.Value.ToString("N0") VND</h4>
-            <h4 class="pull-right" style="color:red;">
-                Giá gốc: @item.GiaBanGoc.Value.ToString("N0") VND
-                <br />Giá chỉ còn: @item.GiaBan.Value.ToString("N0") VND<br />
-            </h4>
-        }
-        else
-        {
-            <h4 class="pull-right" style="color:red;">Liên hệ</h4>
-        }*@
+                                {
+                                    //<h4 class="pull-right" style="color:red;">@item.GiaBan.Value.ToString("N0") VND</h4>
+                                    <h4 class="pull-right" style="color:red;">
+                                        Giá gốc: @item.GiaBanGoc.Value.ToString("N0") VND
+                                        <br />Giá chỉ còn: @item.GiaBan.Value.ToString("N0") VND<br />
+                                    </h4>
+                                }
+                                else
+                                {
+                                    <h4 class="pull-right" style="color:red;">Liên hệ</h4>
+                                }*@
                             @if (item.GiaBan.HasValue && item.GiaBan > 0)
                             {
                                 <h4 class="pull-right" style="color:red;">
@@ -66,7 +66,6 @@
         @Html.PagedListPager(Model, page => Url.Action("ShowAllBook", new { page = page }))
     </div>
 </div>
-
 
 
 

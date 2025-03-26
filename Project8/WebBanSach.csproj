@@ -171,6 +171,7 @@
     <Compile Include="Areas\Admin\Code\CheckSession.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginController.cs" />
+    <Compile Include="Models\Data\AdminLog.cs" />
     <Compile Include="Areas\Admin\Models\LoginModel.cs" />
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\CartController.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="Models\CartModel.cs" />
     <Compile Include="Models\Data\Admin.cs" />
     <Compile Include="Models\Data\BSDBContext.cs" />
+    <Compile Include="Models\Data\Builder\SachFilterBuilder.cs" />
     <Compile Include="Models\Data\ChiTietDDH.cs" />
     <Compile Include="Models\Data\DonDatHang.cs" />
     <Compile Include="Models\Data\DonDatHang_Ajax.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Models\Data\NhaXuatBan.cs" />
     <Compile Include="Models\Data\OrderFactory.cs" />
     <Compile Include="Models\Data\Sach.cs" />
+    <Compile Include="Models\Data\Builder\SachFilter.cs" />
     <Compile Include="Models\Data\TacGia.cs" />
     <Compile Include="Models\Data\TheLoai.cs" />
     <Compile Include="Models\IPN.cs" />
@@ -1053,7 +1056,6 @@
     <Content Include="Areas\Admin\Views\Home\ShowListCategory.cshtml" />
     <Content Include="Areas\Admin\Views\Home\ShowListAuthor.cshtml" />
     <Content Include="Areas\Admin\Views\Home\ShowListPublish.cshtml" />
-    <Content Include="Areas\Admin\Views\Home\AddBook.cshtml" />
     <Content Include="Areas\Admin\Views\Home\DetailsBook.cshtml" />
     <Content Include="Areas\Admin\Views\Home\AddCategory.cshtml" />
     <Content Include="Areas\Admin\Views\Home\AddAuthor.cshtml" />
@@ -1178,6 +1180,8 @@
     <Content Include="Views\Cart\View.cshtml" />
     <Content Include="Views\Cart\Error.cshtml" />
     <Content Include="Views\Checkout\Checkout.cshtml" />
+    <Content Include="Views\Book\Filter.cshtml" />
+    <Content Include="Views\Book\_FilterPanel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

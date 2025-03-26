@@ -4,12 +4,13 @@ namespace WebBanSach.Models.Data
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using WebBanSach.Areas.Admin.Models;
 
     public partial class BSDBContext : DbContext
     {
         private static BSDBContext _instance;
         private static readonly object _lock = new object();
-        public BSDBContext(): base("name=BSBD2")
+        public BSDBContext() : base("name=BSBD2")
         {
         }
 
@@ -40,6 +41,7 @@ namespace WebBanSach.Models.Data
         public virtual DbSet<Sach> Saches { get; set; }
         public virtual DbSet<TacGia> TacGias { get; set; }
         public virtual DbSet<TheLoai> TheLoais { get; set; }
+      //public virtual DbSet<AdminLog> AdminLogs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -116,6 +118,12 @@ namespace WebBanSach.Models.Data
                 .HasMany(e => e.Saches)
                 .WithRequired(e => e.TheLoai)
                 .WillCascadeOnDelete(false);
+            ////Cap nhat cho mau Command- AdminLog
+            //modelBuilder.Entity<AdminLog>()
+            //    .HasRequired(l => l.Admin)
+            //    .WithMany()
+            //    .HasForeignKey(l => l.AdminId)
+            //    .WillCascadeOnDelete(false);
         }
     }
 }
