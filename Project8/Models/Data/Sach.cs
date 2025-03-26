@@ -72,6 +72,5 @@
         public virtual TheLoai TheLoai { get; set; }
 
         public virtual TacGia TacGia { get; set; }
-
     }
 }

@@ -7,7 +7,6 @@ using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using PagedList;
 using PagedList.Mvc;
-using WebBanSach.Models.Data.ChainOfResponsitory;
 
 namespace WebBanSach.Controllers
 {
@@ -93,47 +92,6 @@ namespace WebBanSach.Controllers
             }
 
             return View(books);
-        }
-
-
-        //Filter Sach
-        [HttpGet]
-        public ActionResult Filter(SachFilter filter = null)
-        {
-            var sachQuery = db.Saches.AsNoTracking().AsQueryable();
-
-            var theLoaiFilter = new TheLoaiFilter();
-            var giaBanFilter = new GiaFilter();
-            var tacGiaFilter = new TacGiaFilter();
-            var soLuongTonFilter = new SoLuongTonFilter();
-            var ngayCapNhatFilter = new NgayCapNhatFilter();
-
-            theLoaiFilter.setNext(giaBanFilter)
-                         .setNext(tacGiaFilter)
-                         .setNext(soLuongTonFilter)
-                         .setNext(ngayCapNhatFilter);
-          
-            var filteredSachs = theLoaiFilter.Apply(sachQuery, filter ?? new SachFilter()).ToList();
-
-            ViewBag.TheLoaiList = db.TheLoais.AsNoTracking().ToList();
-            ViewBag.filterResult = filter ?? new SachFilter();
-            return View("Filter", filteredSachs);
-        }
-
-        // Action mới để trả về panel lọc
-        [HttpGet]
-        public ActionResult GetFilterPanel()
-        {
-            try
-            {
-                ViewBag.TheLoaiList = db.TheLoais.ToList();
-                var filter = new SachFilter();
-                return PartialView("_FilterPanel", filter);
-            }
-            catch (Exception ex)
-            {
-                return Content("Lỗi: " + ex.Message);
-            }
         }
     }
 }

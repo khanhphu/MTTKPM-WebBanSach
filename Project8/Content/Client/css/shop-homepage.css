@@ -58,13 +58,13 @@ body {
     margin: 50px 0;
 }*/
 
-/*.navbar-inverse .navbar-nav>li>a {
-    color: #;
+.navbar-inverse .navbar-nav>li>a {
+    color: #ffffff;
     font-size: 18px;
-}*/
+}
 
 .navbar-inverse {
-    background-color: #2f4f4f;
+    background-color: #087B39;
 }
 
 .col-md-3 .list-group a
@@ -73,12 +73,3 @@ body {
     color: #000000;
 }
 
-/* Add to /Content/Client/css/shop-homepage.css */
-.add-to-cart {
-    position: relative;
-    z-index: 1000;
-}
-
-div[style*="position: absolute"] {
-    z-index: 1; /* Lower than buttons */
-}

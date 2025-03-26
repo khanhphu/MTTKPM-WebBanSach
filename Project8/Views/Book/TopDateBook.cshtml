@@ -16,13 +16,13 @@
                 <a class="btn btn-warning add-to-cart" data-id="@item.MaSach" data-name="@item.TenSach">Mua</a>
 
                 @*@if (item.GiaBan > 0)
-                    {
-                        <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
-                    }
-                    else
-                    {
-                        <h4 class="pull-right" style="color:red;">Liên hệ</h4>
-                    }*@
+                {
+                    <h4 class="pull-right" style="color:black;">@item.GiaBan.Value.ToString("N0") VND</h4>
+                }
+                else
+                {
+                    <h4 class="pull-right" style="color:red;">Liên hệ</h4>
+                }*@
 
                 @if (item.GiaBan.HasValue && item.GiaBan > 0)
                 {
@@ -45,29 +45,48 @@
     </div>
 }
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script>
-     $(document).ready(function () {
-         $('.add-to-cart').on('click', function (e) {
-             e.preventDefault(); // Prevent default link behavior
-             var maSach = $(this).data('id');
-             var quantity = 1;
-             var bookName = $button.data('name');
+@section jsFooter {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-             $.post('/Cart/Add', { id: maSach, quantity: quantity }, function (response) {
-                 if (response.success) {
-                     alert('Đã thêm "' + bookName + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
-                     //update cart count - after click mua
-                     var cartCount = response.cartCount;
-                     $('.cart-count').text(response.itemCount)
-                         .removeClass('badge-secondary')
-                         .addClass(response.itemCount > 0 ? 'badge-primary' : 'badge-secondary')
-                 } else {
-                     alert(response.message);
-                 }
-             }).fail(function (xhr, status, error) {
-                 alert('Lỗi kết nối đến server: ' + error);
-             });
-         });
-     });
-</script>
+    <script>
+        if (typeof jQuery === 'undefined') {
+            console.log('jQuery failed to load!');
+        } else {
+            console.log('jQuery loaded successfully');
+        }
+
+        $(document).ready(function () {
+            console.log('Document is ready');
+
+            $('.add-to-cart').on('click', function (e) {
+                e.preventDefault();
+                console.log('Add to cart button clicked');
+
+                var maSach = $(this).data('id');
+                var bookName = $(this).data('name');
+                var quantity = 1;
+
+                console.log('MaSach:', maSach, 'BookName:', bookName);
+
+                if (!maSach) {
+                    alert('Lỗi: Không tìm thấy MaSach');
+                    console.log('No MaSach found');
+                    return;
+                }
+
+                $.post('/Cart/Add', { id: maSach, quantity: quantity }, function (response) {
+                    console.log('AJAX Success:', response);
+                    if (response.success) {
+                        alert('Đã thêm "' + bookName + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
+                        window.location.href = '/Cart/Index';
+                    } else {
+                        alert(response.message);
+                    }
+                }).fail(function (xhr, status, error) {
+                    console.error('AJAX Error:', status, error, xhr.responseText);
+                    alert('Lỗi kết nối đến server: ' + error);
+                });
+            });
+        });
+    </script>
+}

@@ -3,19 +3,14 @@
 }
 
 <div class="row">
-    <div class="col-md-3" style="border-radius: 26px; border: 1px solid #dea3a3; background: #2F4F4F;">
-        <div class="header-left-panel" style="display:inline-block">
-            <p style="text-align: center; margin: 5px; font-size: 20px; font-weight: 600;">
-                <font style="color:#F5F6F0; display:inline-block">DANH MỤC SÁCH</font>
-            </p>
-            <a href="#" class="btn btn-danger m-4" id="showFilterBtn">Filter</a>
-        </div>
-        <div id="categoryPanel">
-            @Html.Action("ShowCategory", "Home")
-        </div>
+    <div class="col-md-3" style="border-radius: 26px; border: 1px solid #dea3a3; background:#33FF99;">
+        <p style="text-align: center; margin: 5px; font-size: 25px; font-weight: 600;"><font style="color:#525151;"> DANH MỤC SÁCH</font></p>
+        @Html.Action("ShowCategory", "Home")
     </div>
     <div style="width:71%" class="col-md-9">
+        @* Slide *@
         <div class="row carousel-holder">
+            <!-- Fixed syntax -->
             <div class="col-md-12">
                 <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                     <ol class="carousel-indicators">
@@ -25,13 +20,19 @@
                     </ol>
                     <div class="carousel-inner">
                         <div class="item active">
-                            <a href="/Book/Details/8"><img src="@Url.Content("~/images/combo1.jpg")" alt="slideImage1" /></a>
+                            <a href="/Book/Details/8">
+                                <img src="@Url.Content("~/images/combo1.jpg")" alt="slideImage1" />
+                            </a>
                         </div>
                         <div class="item">
-                            <a href="/Book/Details/9"><img src="@Url.Content("~/images/combo2.jpg")" alt="slideImage2" /></a>
+                            <a href="/Book/Details/9">
+                                <img src="@Url.Content("~/images/combo2.jpg")" alt="slideImage2" /> <!-- Fixed typo -->
+                            </a>
                         </div>
                         <div class="item">
-                            <a href="/Book/Details/10"><img src="@Url.Content("~/images/combo3.jpg")" alt="slideImage3" /></a>
+                            <a href="/Book/Details/10">
+                                <img src="@Url.Content("~/images/combo3.jpg")" alt="slideImage3" />
+                            </a>
                         </div>
                     </div>
                     <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
@@ -43,55 +44,31 @@
                 </div>
             </div>
         </div>
+        @* kết thúc sách nổi bật *@
         <hr />
+        @* Tiêu đề sách mới cập nhật *@
         <div class="row">
-            <div style="position: absolute; width: 800px; height: 70px; left: 19px; top: 443px; background: #2F4F4F; border-radius: 50px; line-height: 2.1;">
+            <div style="position: absolute; width: 800px; height: 70px; left: 19px; top: 443px; background:#33FF99; border-radius: 50px; line-height: 2.1;">
                 <div class="row">
                     <div class="col-lg-1" style="margin: 1rem 0rem 0rem 5rem">
                         <img style="width: 46px; height: 46px; left: 50px; top: 484px;" src="@Url.Content("~/images/topSach.png")" />
                     </div>
                     <div class="col-lg-4" style="margin:2rem 0rem 0 -1rem">
-                        <h4 style="color: #F5F6F0">Sách mới cập nhật</h4>
+                        <h4>Sách mới cập nhật</h4>
                     </div>
                 </div>
             </div>
         </div>
-        <div style="margin-top: 10rem" class="row" id="sachList">
+        <div style="margin-top: 10rem" class="row">
             @Html.Action("TopDateBook", "Book")
         </div>
+        @* kết thúc sách mới cập nhật *@
         <hr />
-        <h3><font style="color:#2F4F4F">Sách Bán Chạy</font></h3>
+        <h3><font style="color:#33FF99">Sách Bán Chạy</font></h3>
         <p style="text-align:right"><a href="/Book/ShowAllBook">Xem tất cả</a></p>
         <div class="row">
             @Html.Action("DidYouSee", "Book")
         </div>
+        @* kết thúc sách bán chạy *@
     </div>
 </div>
-
-@section scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#showFilterBtn").click(function (e) {
-                e.preventDefault();
-                var url = '@Url.Content("~/Book/GetFilterPanel")';
-                console.log("Đang gọi AJAX tới: " + url);
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function (data) {
-                        console.log("Tải panel lọc thành công!");
-                        $("#categoryPanel").html(data);
-                    },
-                    error: function (xhr, status, error) {
-                        console.log("Lỗi AJAX:");
-                        console.log("Status: " + status);
-                        console.log("Error: " + error);
-                        console.log("Response: " + xhr.responseText);
-                        alert("Không thể tải panel lọc. Xem console để biết chi tiết.");
-                    }
-                });
-            });
-        });
-    </script>
-}

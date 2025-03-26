@@ -183,24 +183,16 @@
     <Compile Include="Models\CartModel.cs" />
     <Compile Include="Models\Data\Admin.cs" />
     <Compile Include="Models\Data\BSDBContext.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\GiaFilter.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\NgayCapNhat.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\NXBFilter.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\SoLuongTonFilter.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\TacGiaFilter.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\TheLoaiFilter.cs" />
     <Compile Include="Models\Data\ChiTietDDH.cs" />
     <Compile Include="Models\Data\DonDatHang.cs" />
     <Compile Include="Models\Data\DonDatHang_Ajax.cs" />
     <Compile Include="Models\Data\DonDatHang_m.cs" />
     <Compile Include="Models\Data\IOrderFactory.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\ISachFilter.cs" />
     <Compile Include="Models\Data\KhachHang.cs" />
     <Compile Include="Models\Data\LienHe.cs" />
     <Compile Include="Models\Data\NhaXuatBan.cs" />
     <Compile Include="Models\Data\OrderFactory.cs" />
     <Compile Include="Models\Data\Sach.cs" />
-    <Compile Include="Models\Data\ChainOfResponsitory\SachFilter.cs" />
     <Compile Include="Models\Data\TacGia.cs" />
     <Compile Include="Models\Data\TheLoai.cs" />
     <Compile Include="Models\IPN.cs" />
@@ -1186,8 +1178,6 @@
     <Content Include="Views\Cart\View.cshtml" />
     <Content Include="Views\Cart\Error.cshtml" />
     <Content Include="Views\Checkout\Checkout.cshtml" />
-    <Content Include="Views\Book\Filter.cshtml" />
-    <Content Include="Views\Book\_FilterPanel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
