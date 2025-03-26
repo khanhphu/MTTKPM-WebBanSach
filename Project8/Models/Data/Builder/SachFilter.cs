@@ -8,6 +8,9 @@ using WebBanSach.Models.Data;
 using static System.Net.Mime.MediaTypeNames;
 namespace WebBanSach.Models.Data.Builder
 {
+    /// <summary>
+    /// Moi cap nhat sau khi sua nhanh master
+    /// </summary>
     public class SachFilter
     {
         //lop chua cac tieu chi loc: loc theo gia, theo the loai, tac gia,...
