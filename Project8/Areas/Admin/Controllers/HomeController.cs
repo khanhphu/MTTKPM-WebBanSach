@@ -7,6 +7,7 @@ using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using System.IO;
 using Project8.Areas.Admin.Code;
+using static WebBanSach.Models.Data.Sach;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
@@ -53,61 +54,70 @@ namespace WebBanSach.Areas.Admin.Controllers
             return r + 1;
         }
 
-        //POST : Admin/Home/AddBook : thực hiện thêm sách
-        [HttpPost]
-        public ActionResult AddBook(Sach sach, HttpPostedFileBase fileUpload)
-        {
-            //lấy mã mà hiển thị tên
-            ViewBag.MaLoai = new SelectList(db.TheLoais.ToList().OrderBy(x => x.TenLoai), "MaLoai", "TenLoai");
-            ViewBag.MaNXB = new SelectList(db.NhaXuatBans.ToList().OrderBy(x => x.TenNXB), "MaNXB", "TenNXB");
-            ViewBag.MaTG = new SelectList(db.TacGias.ToList().OrderBy(x => x.TenTG), "MaTG", "TenTG");
+         //POST : Admin/Home/AddBook : thực hiện thêm sách
+ [HttpPost]
+ public ActionResult AddBook(Sach model, HttpPostedFileBase fileUpload)
+ {
 
-            //kiểm tra việc upload ảnh
-            if (fileUpload == null)
-            {
-                ViewBag.Alert = "Vui lòng chọn ảnh bìa";
-                return View();
-            }
-            else
-            {
-                //kiểm tra dữ liệu db có hợp lệ?
-                if (ModelState.IsValid)
-                {
-                    //lấy file đường dẫn
-                    var fileName = Path.GetFileName(fileUpload.FileName);
-                    //chuyển file đường dẫn và biên dịch vào /images
-                    var path = Path.Combine(Server.MapPath("/images"), fileName);
+     ViewBag.MaLoai = new SelectList(db.TheLoais.ToList().OrderBy(x => x.TenLoai), "MaLoai", "TenLoai");
+     ViewBag.MaNXB = new SelectList(db.NhaXuatBans.ToList().OrderBy(x => x.TenNXB), "MaNXB", "TenNXB");
+     ViewBag.MaTG = new SelectList(db.TacGias.ToList().OrderBy(x => x.TenTG), "MaTG", "TenTG");
+     //kiểm tra việc upload ảnh
+     if (fileUpload == null)
+     {
+         ViewBag.Alert = "Vui lòng chọn ảnh bìa";
+         return View();
+     }
+     else
+     {
+         //kiểm tra dữ liệu db có hợp lệ?
+         if (ModelState.IsValid)
+         {
+             //lấy file đường dẫn
+             var fileName = Path.GetFileName(fileUpload.FileName);
+             //chuyển file đường dẫn và biên dịch vào /images
+             var path = Path.Combine(Server.MapPath("/images"), fileName);
+             //kiểm tra đường dẫn ảnh có tồn tại?
+             if (System.IO.File.Exists(path))
+             {
+                 ViewBag.Alert = "Hình ảnh đã tồn tại";
+             }
+             else
+             {
+                 fileUpload.SaveAs(path);
+             }
 
-                    //kiểm tra đường dẫn ảnh có tồn tại?
-                    if (System.IO.File.Exists(path))
-                    {
-                        ViewBag.Alert = "Hình ảnh đã tồn tại";
-                    }
-                    else
-                    {
-                        fileUpload.SaveAs(path);
-                    }
+             Sach.SachBuilder sachBuilder = new Sach.SachBuilder();
 
-                    //thực hiện việc lưu đường dẫn ảnh vào link ảnh bìa
-                    sach.AnhBia = fileName;
-                    //thực hiện lưu vào db
-                    sach.MaSach = TaoMaSach();
-                    var result = new AdminProcess().InsertBook(sach);
-                    if (result > 0)
-                    {
-                        ViewBag.Success = "Thêm mới thành công";
-                        //xóa trạng thái để thêm mới
-                        ModelState.Clear();
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "thêm không thành công.");
-                    }
-                }
-            }
 
-            return View();
-        }
+             sachBuilder.SetMaLoai(model.MaLoai)
+                       .SetMaNXB(model.MaNXB)
+                       .SetMaTG(model.MaTG)
+                       .SetTenSach(model.TenSach)
+                       .SetGiaBan(model.GiaBan)
+                       .SetMota(model.Mota)
+                       .SetNguoiDich(model.NguoiDich)
+                       .SetAnhBia(fileName)
+                       .SetNgayCapNhat(DateTime.Now)
+                       .SetSoLuongTon(model.SoLuongTon);
+
+
+             var result = new AdminProcess().InsertBook(sachBuilder);
+
+             if (result > 0)
+             {
+                 ViewBag.Success = "Thêm mới thành công";
+                 //xóa trạng thái để thêm mới
+                 ModelState.Clear();
+             }
+             else
+             {
+                 ModelState.AddModelError("", "thêm không thành công.");
+             }
+         }
+     }
+     return View();
+ }
 
         //GET : Admin/Home/DetailsBook/:id : Trang xem chi tiết 1 cuốn sách
         [HttpGet]
