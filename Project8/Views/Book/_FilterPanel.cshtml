@@ -1,5 +1,5 @@
-﻿@model WebBanSach.Models.Data.ChainOfResponsitory.SachFilter
-@using WebBanSach.Models.Data.ChainOfResponsitory
+﻿@model WebBanSach.Models.Data.Builder.SachFilter
+@using WebBanSach.Models.Data.Builder
 @using WebBanSach.Models.Data
 
 <div class="filter-panel" style="padding: 10px;">
@@ -30,20 +30,21 @@
             @foreach (var range in giaRanges)
             {
                 <label class="radio-inline" style="color: #F5F6F0;">
-                    <input type="radio" name="GiaBanMax" value="@range.Value" @(Model != null && Model.GiaBanMax == range.Value ? "checked" : "") />
+                    <input type="radio" name="GiaBan" value="@range.Value" @(Model != null && Model.GiaBan == range.Value ? "checked" : "") />
                     @range.Key
                 </label><br />
             }
         </div>
 
         <!-- Các trường mới -->
+<div class="form-group">
+    @Html.LabelFor(m => m.TenTG, "Tác giả:", new { style = "color: #F5F6F0;" })
+
+    @Html.TextBoxFor(m => m.TenTG, new { @class = "form-control", type = "text" })
+</div>
         <div class="form-group">
-            @Html.LabelFor(m => m.TenTG, "Tác giả:", new { style = "color: #F5F6F0;" })
-            @Html.TextBoxFor(m => m.TenTG, new { @class = "form-control", type = "text" })
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.SoLuongTon, "Số lượng tồn tối thiểu:", new { style = "color: #F5F6F0;" })
-            @Html.TextBoxFor(m => m.SoLuongTon, new { @class = "form-control", type = "number" })
+            @Html.LabelFor(m => m.TenNXB, "Nhà xuất bản:", new { style = "color: #F5F6F0;" })
+            @Html.TextBoxFor(m => m.TenNXB, new { @class = "form-control", type = "text" })
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.NgayCapNhatStart, "Ngày cập nhật từ:", new { style = "color: #F5F6F0;" })

@@ -7,7 +7,7 @@ using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using PagedList;
 using PagedList.Mvc;
-using WebBanSach.Models.Data.ChainOfResponsitory;
+using WebBanSach.Models.Data.Builder;
 
 namespace WebBanSach.Controllers
 {
@@ -100,24 +100,27 @@ namespace WebBanSach.Controllers
         [HttpGet]
         public ActionResult Filter(SachFilter filter = null)
         {
-            var sachQuery = db.Saches.AsNoTracking().AsQueryable();
-
-            var theLoaiFilter = new TheLoaiFilter();
-            var giaBanFilter = new GiaFilter();
-            var tacGiaFilter = new TacGiaFilter();
-            var soLuongTonFilter = new SoLuongTonFilter();
-            var ngayCapNhatFilter = new NgayCapNhatFilter();
-
-            theLoaiFilter.setNext(giaBanFilter)
-                         .setNext(tacGiaFilter)
-                         .setNext(soLuongTonFilter)
-                         .setNext(ngayCapNhatFilter);
-          
-            var filteredSachs = theLoaiFilter.Apply(sachQuery, filter ?? new SachFilter()).ToList();
-
-            ViewBag.TheLoaiList = db.TheLoais.AsNoTracking().ToList();
+            //lay ds sach tu csdl
+            var sachList=db.Saches.AsNoTracking().ToList();
+            var filterBuilder = new SachFilterBuilder();
+            if (filter != null)
+            {
+                filterBuilder.TheLoaiFilter(filter.MaLoai)
+                             .GiaBanFilter(filter.GiaBan)
+                             .TacgiaFilter(filter.TenTG)
+                             .NXBFilter(filter.TenNXB)
+                             .NgayCapNhatStartFilter(filter.NgayCapNhatStart)
+                             .NgayCapNhatEndFilter(filter.NgayCapNhatEnd);
+            }
+            var sachFilter=filterBuilder.Build();
+            //ap dung bo loc vao dsach sach lay tu csdl
+            var filteredSach=sachFilter.Apply(sachList);
+            // Chuẩn bị dữ liệu cho view
+            var theLoaiList = db.TheLoais.AsNoTracking().ToList();
+            ViewBag.TheLoaiList = theLoaiList;
             ViewBag.filterResult = filter ?? new SachFilter();
-            return View("Filter", filteredSachs);
+
+            return View("Filter", filteredSach);
         }
 
         // Action mới để trả về panel lọc
