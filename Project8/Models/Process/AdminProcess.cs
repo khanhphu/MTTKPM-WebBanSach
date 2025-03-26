@@ -35,7 +35,7 @@ namespace WebBanSach.Models.Process
             {
                 if (result.MatKhau == password)
                 {
-                    
+
                     return 1;
                 }
                 else

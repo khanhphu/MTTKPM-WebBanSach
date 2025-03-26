@@ -1,4 +1,4 @@
-﻿namespace WebBanSach.Models.Data
+namespace WebBanSach.Models.Data
 {
     using System;
     using System.Collections.Generic;
@@ -21,11 +21,11 @@
         public int MaSach { get; set; }
 
         [Display(Name = "Mã loại")]
-        [Required(ErrorMessage ="Vui lòng chọn thể loại")]
+        [Required(ErrorMessage = "Vui lòng chọn thể loại")]
         public int MaLoai { get; set; }
 
         [Display(Name = "Mã NXB")]
-        [Required(ErrorMessage ="Vui lòng chọn nhà xuất bản")]
+        [Required(ErrorMessage = "Vui lòng chọn nhà xuất bản")]
         public int MaNXB { get; set; }
 
         [Display(Name = "Mã tác giả")]

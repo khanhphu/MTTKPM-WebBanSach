@@ -1,4 +1,4 @@
-﻿@model WebBanSach.Models.Data.Sach
+﻿﻿@model WebBanSach.Models.Data.Sach
 
 @{
     ViewBag.Title = "Chi tiết";
@@ -48,8 +48,8 @@
     @Html.Action("FavoriteBook", "Book")
 </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
         $(document).ready(function () {
             $('.add-to-cart').on('click', function (e) {
                 e.preventDefault(); // Prevent default link behavior
@@ -59,7 +59,7 @@
                 $.post('/Cart/Add', { id: maSach, quantity: quantity }, function (response) {
                     if (response.success) {
                         alert('Đã thêm "' + '@Model.TenSach' + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
-                        //update cart count - after click mua 
+                        //update cart count - after click mua
                         var cartCount = response.cartCount;
                         $('.cart-count').text(response.itemCount)
                             .removeClass('badge-secondary')
@@ -72,4 +72,4 @@
                 });
             });
         });
-    </script>
+</script>
