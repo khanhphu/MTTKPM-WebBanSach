@@ -50,7 +50,7 @@ namespace WebBanSach.Models.Process
                 }
 
                 // Luôn gán lại GiaBanGoc từ giá gốc của database để đảm bảo nhất quán
-                book.GiaBan = book.GiaBanGoc ?? book.GiaBan;
+                book.GiaBanGoc = book.GiaBanGoc ?? book.GiaBan;
 
                 // Tính lại giá sau khi giảm
                 book.GiaBan = book.GiaBanGoc * (decimal)(1 - _discountRate);
