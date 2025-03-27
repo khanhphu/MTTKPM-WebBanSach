@@ -46,7 +46,7 @@
         </dt>
 
         <dd>
-            <p><span>@(Model.GiaBan.HasValue ? Model.GiaBan.Value.ToString("N0") : "Liên hệ")</span> VND</p>
+            <p><span>@(Model.GiaBan.HasValue ? Model.GiaBan.GetValueOrDefault(0).ToString("N0",new System.Globalization.CultureInfo("vi-VND")) : "Liên hệ")</span> VND</p>
         </dd>
 
         <dt>
