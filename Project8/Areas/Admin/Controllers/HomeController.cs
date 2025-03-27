@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 using WebBanSach.Areas.Admin.Code;
 using System.Threading.Tasks;
 using System.Configuration;
+using Newtonsoft.Json.Linq;
+using System.Web.Helpers;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
@@ -27,7 +29,7 @@ namespace WebBanSach.Areas.Admin.Controllers
         {
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12; // Buộc dùng TLS 1.2
             _orderSubject = new OrderSubject();
-            string sendGridAPIKey = ConfigurationManager.AppSettings["SendGridApiKey"];
+            string sendGridAPIKey = "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";
             _orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
         }
 
