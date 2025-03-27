@@ -1,65 +1,57 @@
 ﻿@model IEnumerable<WebBanSach.Models.Data.DonDatHang>
 
-@{ ViewBag.Title = "Order";
-                Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml"; }
+@{
+    ViewBag.Title = "Order";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
 
 <h2>Quản lý đơn hàng</h2>
+
+<!-- Hiển thị thông báo từ TempData -->
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
 
 <table class="table" id="myTable">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MaDDH)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.KhachHang.TenKH)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayDat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayGiao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TinhTrang)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.MaDDH)</th>
+            <th>@Html.DisplayNameFor(model => model.KhachHang.TenKH)</th>
+            <th>@Html.DisplayNameFor(model => model.NgayDat)</th>
+            <th>@Html.DisplayNameFor(model => model.NgayGiao)</th>
+            <th>@Html.DisplayNameFor(model => model.TinhTrang)</th>
+            <th>Tracking</th>
             <th></th>
         </tr>
     </thead>
-
     <tbody>
         @foreach (var item in Model)
         {
-<tr id="row_@item.MaDDH">
-    <td>
-        @Html.DisplayFor(modelItem => item.MaDDH)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.KhachHang.TenKH)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.NgayDat)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.NgayGiao)
-    </td>
-    <td>
-        <a href="#">@(item.TinhTrang ? "Chưa giao" : "Đã giao")</a>
-    </td>
-    <td>
-        @Html.DropDownList("Tracking", new List<SelectListItem>
-{
-                        new SelectListItem() {Text = "Xử Lý", Value="0"},
-                        new SelectListItem() {Text = "Đã Đóng Gói", Value="1"},
-                        new SelectListItem() {Text = "Đang Giao", Value="2"},
-                        new SelectListItem() {Text = "Giao Thành Công", Value="3"}
-    })
-    </td>
-    <td>
-        @Html.ActionLink("Xem", "DetailsOrder", new { id = item.MaDDH })
-    </td>
-</tr>}
+            <tr id="row_@item.MaDDH">
+                <td>@Html.DisplayFor(modelItem => item.MaDDH)</td>
+                <td>@Html.DisplayFor(modelItem => item.KhachHang.TenKH)</td>
+                <td>@Html.DisplayFor(modelItem => item.NgayDat)</td>
+                <td>@Html.DisplayFor(modelItem => item.NgayGiao)</td>
+                <td colspan="2">
+                    @using (Html.BeginForm("UpdateOrder", "Home", FormMethod.Post))
+                    {
+                        @Html.Hidden("maDDH", item.MaDDH)
+                        <input type="checkbox" name="tinhTrang" value="true" @(item.TinhTrang ? "checked" : "") onchange="this.form.submit();" />
+                        @Html.Hidden("tinhTrang", "false")
+                        @Html.DropDownList("Tracking", new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Xử Lý", Value = "0", Selected = (item.Tracking == 0) },
+                            new SelectListItem { Text = "Đã Đóng Gói", Value = "1", Selected = (item.Tracking == 1) },
+                            new SelectListItem { Text = "Đang Giao", Value = "2", Selected = (item.Tracking == 2) },
+                            new SelectListItem { Text = "Giao Thành Công", Value = "3", Selected = (item.Tracking == 3) }
+                        }, new { onchange = "this.form.submit();" })
+                    }
+                </td>
+                <td>@Html.ActionLink("Xem", "DetailsOrder", new { id = item.MaDDH })</td>
+            </tr>
+        }
     </tbody>
-
 </table>

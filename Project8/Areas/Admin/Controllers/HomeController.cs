@@ -7,6 +7,9 @@ using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using System.IO;
 using Project8.Areas.Admin.Code;
+using System.Text.RegularExpressions;
+using WebBanSach.Areas.Admin.Code;
+using System.Threading.Tasks;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
@@ -17,6 +20,15 @@ namespace WebBanSach.Areas.Admin.Controllers
 
         //Khởi tạo biến dữ liệu : db
         BSDBContext db = BSDBContext.Instance;
+        //Khoi tao ObserverSubject 
+        private readonly OrderSubject _orderSubject;
+        public HomeController()
+        {
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12; // Buộc dùng TLS 1.2
+            _orderSubject = new OrderSubject();
+            string sendGridAPIKey = "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";
+            _orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
+        }
 
         // GET: Admin/Home : trang chủ Admin
         public ActionResult Index()
@@ -586,6 +598,38 @@ namespace WebBanSach.Areas.Admin.Controllers
             var result = new OrderProcess().ListOrder();
 
             return View(result);
+        }
+        //POST: 
+        [HttpPost]
+        public async Task<ActionResult> UpdateOrder(int maDDH, bool tinhTrang, int tracking)
+        {
+
+            var order = db.DonDatHangs.FirstOrDefault(o => o.MaDDH == maDDH);
+            if (order != null)
+            {
+                order.TinhTrang = tinhTrang;
+                order.Tracking = tracking;
+                db.SaveChanges();
+
+                if (tinhTrang)
+                {
+                    var customerEmail = db.Database.SqlQuery<string>(
+                        "SELECT Email FROM KhachHang WHERE MaKH = {0}", order.MaKH)
+                        .FirstOrDefault();
+
+                    if (!string.IsNullOrEmpty(customerEmail))
+                    {
+                        TempData["Message"] = $"Tìm thấy MaKH: {order.MaKH}";
+                        var emailResult = await _orderSubject.Notify(order); 
+                        TempData["Message"] += $" | {emailResult}";
+                    }
+                    else
+                    {
+                        TempData["Message"] = $"Không tìm thấy email cho MaKH: {order.MaKH}";
+                    }
+                }
+            }
+            return RedirectToAction("Order");
         }
 
         //GET : /Admin/Home/DetailsOrder : trang xem chi tiết đơn hàng
