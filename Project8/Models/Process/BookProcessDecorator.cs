@@ -6,7 +6,7 @@ using WebBanSach.Models.Data;
 
 namespace WebBanSach.Models.Process
 {
-    public class BookProcessDecorator: IBookProcess
+    public class BookProcessDecorator : IBookProcess
     {
         protected IBookProcess _bookProcess;
 
