@@ -1119,6 +1119,7 @@
     <Content Include="Areas\Admin\Views\Home\Order.cshtml" />
     <Content Include="Areas\Admin\Views\Home\DetailsOrder.cshtml" />
     <Content Include="EmailTemplate\Text.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\AddBook.cshtml" />
     <None Include="Properties\PublishProfiles\123.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
