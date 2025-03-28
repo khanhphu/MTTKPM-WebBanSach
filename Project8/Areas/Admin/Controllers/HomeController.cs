@@ -31,7 +31,7 @@ namespace WebBanSach.Areas.Admin.Controllers
             _orderSubject = new OrderSubject();
             //Phải comment lại mỗi khi push lên github ko nó sẽ xóa ở Sendgrid
             //string sendGridAPIKey = "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";
-            _orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
+            //_orderSubject.Attach(new EmailObserver(sendGridAPIKey, db));
         }
 
         // GET: Admin/Home : trang chủ Admin
@@ -608,14 +608,14 @@ namespace WebBanSach.Areas.Admin.Controllers
 
         #region Đơn đặt hàng
 
-        //GET : Admin/Home/Order : trang quản lý đơn đặt hàng
+       // GET : Admin/Home/Order : trang quản lý đơn đặt hàng
         public ActionResult Order()
         {
             var result = new OrderProcess().ListOrder();
 
             return View(result);
         }
-        //POST: 
+       // POST: 
         [HttpPost]
         public async Task<ActionResult> UpdateOrder(int maDDH, bool tinhTrang, int tracking)
         {
@@ -636,7 +636,7 @@ namespace WebBanSach.Areas.Admin.Controllers
                     if (!string.IsNullOrEmpty(customerEmail))
                     {
                         TempData["Message"] = $"Tìm thấy MaKH: {order.MaKH}";
-                        var emailResult = await _orderSubject.Notify(order); 
+                        var emailResult = await _orderSubject.Notify(order);
                         TempData["Message"] += $" | {emailResult}";
                     }
                     else
@@ -648,7 +648,7 @@ namespace WebBanSach.Areas.Admin.Controllers
             return RedirectToAction("Order");
         }
 
-        //GET : /Admin/Home/DetailsOrder : trang xem chi tiết đơn hàng
+       // GET : /Admin/Home/DetailsOrder : trang xem chi tiết đơn hàng
         public ActionResult DetailsOrder(int id)
         {
             var result = new OderDetailProcess().ListDetail(id);
