@@ -196,6 +196,9 @@
     <Compile Include="Models\Data\BSDBContext.cs" />
     <Compile Include="Models\Data\Builder\SachFilterBuilder.cs" />
     <Compile Include="Models\Data\ChiTietDDH.cs" />
+    <Compile Include="Models\Data\Command\CancelOrderCommand.cs" />
+    <Compile Include="Models\Data\Command\CommandManager.cs" />
+    <Compile Include="Models\Data\Command\ICommand.cs" />
     <Compile Include="Models\Data\DonDatHang.cs" />
     <Compile Include="Models\Data\DonDatHang_Ajax.cs" />
     <Compile Include="Models\Data\DonDatHang_m.cs" />
