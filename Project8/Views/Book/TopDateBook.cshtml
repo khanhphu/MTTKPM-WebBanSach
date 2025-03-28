@@ -28,7 +28,7 @@
                 {
                     <h4 class="pull-right" style="color:red;">
                         <span style="text-decoration: line-through; color: gray;">
-                            Giá gốc: @(item.GiaBanGoc.HasValue ? item.GiaBanGoc.Value.ToString("N0") + " VND" : "Chưa có giá")
+                            Giá gốc: @(item.GiaBanGoc.HasValue ? item.GiaBanGoc.GetValueOrDefault(0).ToString("N0",new System.Globalization.CultureInfo("vi-Vn")) + " VND" : "Chưa có giá")
                         </span>
                         <br />
                         <span style="font-weight: bold;">
@@ -38,7 +38,7 @@
                 }
                 else
                 {
-                    <h4 class="pull-right" style="color:red;">Liên hệ</h4>
+                    <h4 class="pull-right" style="color:red;">Lien he</h4>
                 }
             </div>
         </div>

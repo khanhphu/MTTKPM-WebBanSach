@@ -26,7 +26,7 @@
                             <h4>
                                 <a title="@item.TenSach" href="/Book/Details/@item.MaSach" style="color:green;">@(item.TenSach.Length > 26 ? item.TenSach.Substring(0, 22) + "..." : item.TenSach)</a>
                             </h4>
-                            <a class="btn btn-warning" href="/Cart/Add/?id=@item.MaSach&quantity=1">Mua hàng</a>
+                            <a class="btn btn-warning add-to-cart" data-id="@item.MaSach" data-name="@item.TenSach">Mua</a>
                             @*@if (item.GiaBan > 0)
                                 {
                                     //<h4 class="pull-right" style="color:red;">@item.GiaBan.Value.ToString("N0") VND</h4>
@@ -43,11 +43,11 @@
                             {
                                 <h4 class="pull-right" style="color:red;">
                                     <span style="text-decoration: line-through; color: gray;">
-                                        Giá gốc: @(item.GiaBanGoc.HasValue ? item.GiaBanGoc.Value.ToString("N0") + " VND" : "Chưa có giá")
+                                        Giá gốc: @(item.GiaBanGoc.HasValue ? item.GiaBanGoc.GetValueOrDefault(0).ToString("N0",new System.Globalization.CultureInfo("vi-VN")) + " VND" : "Chưa có giá")
                                     </span>
                                     <br />
                                     <span style="font-weight: bold;">
-                                        Giá chỉ còn: @item.GiaBan.Value.ToString("N0") VND
+                                        Giá chỉ còn: @item.GiaBan.GetValueOrDefault(0).ToString("N0", new System.Globalization.CultureInfo("vi-VN")) VND
                                     </span>
                                 </h4>
                             }
@@ -67,5 +67,30 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('.add-to-cart').on('click', function (e) {
+            e.preventDefault(); // Prevent default link behavior
+            var maSach = $(this).data('id');
+            var quantity = 1;
+            var bookName = $(this).data('name');  //sửa $(button) thành $(this)
 
+            $.post('/Cart/Add', { id: maSach, quantity: quantity }, function (response) {
+                if (response.success) {
+                    alert('Đã thêm "' + bookName + '" vào giỏ hàng! Tổng tiền: ' + response.total.toLocaleString('vi-VN') + ' VND');
+                    //update cart count - after click mua
+                    var cartCount = response.cartCount;
+                    $('.cart-count').text(response.itemCount)
+                        .removeClass('badge-secondary')
+                        .addClass(response.itemCount > 0 ? 'badge-primary' : 'badge-secondary')
+                } else {
+                    alert(response.message);
+                }
+            }).fail(function (xhr, status, error) {
+                alert('Lỗi kết nối đến server: ' + error);
+            });
+        });
+    });
+</script>
 

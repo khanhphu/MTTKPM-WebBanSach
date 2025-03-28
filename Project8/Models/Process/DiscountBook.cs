@@ -39,6 +39,16 @@ namespace WebBanSach.Models.Process
             return ApplyDiscount(books);
         }
 
+        public override Sach GetBookById(int id) // Triển khai phương thức mới
+        {
+            var book = base.GetBookById(id);
+            if (book != null)
+            {
+                return ApplyDiscount(new List<Sach> { book })[0];
+            }
+            return null;
+        }
+
         private List<Sach> ApplyDiscount(List<Sach> books)
         {
             foreach (var book in books)

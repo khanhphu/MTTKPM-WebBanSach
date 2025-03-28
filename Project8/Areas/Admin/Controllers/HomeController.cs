@@ -7,6 +7,12 @@ using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using System.IO;
 using Project8.Areas.Admin.Code;
+using System.Text.RegularExpressions;
+using WebBanSach.Areas.Admin.Code;
+using System.Threading.Tasks;
+using System.Configuration;
+using Newtonsoft.Json.Linq;
+using System.Web.Helpers;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
@@ -17,6 +23,16 @@ namespace WebBanSach.Areas.Admin.Controllers
 
         //Khởi tạo biến dữ liệu : db
         BSDBContext db = BSDBContext.Instance;
+        //Khoi tao ObserverSubject 
+        private readonly OrderSubject _orderSubject;
+        public HomeController()
+        {
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12; // Buộc dùng TLS 1.2
+            _orderSubject = new OrderSubject();
+            //Phải comment lại mỗi khi push lên github ko nó sẽ xóa ở Sendgrid
+            //string sendGridAPIKey = "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";
+            //_orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
+        }
 
         // GET: Admin/Home : trang chủ Admin
         public ActionResult Index()
@@ -55,13 +71,12 @@ namespace WebBanSach.Areas.Admin.Controllers
 
         //POST : Admin/Home/AddBook : thực hiện thêm sách
         [HttpPost]
-        public ActionResult AddBook(Sach sach, HttpPostedFileBase fileUpload)
+        public ActionResult AddBook(Sach model, HttpPostedFileBase fileUpload)
         {
-            //lấy mã mà hiển thị tên
+
             ViewBag.MaLoai = new SelectList(db.TheLoais.ToList().OrderBy(x => x.TenLoai), "MaLoai", "TenLoai");
             ViewBag.MaNXB = new SelectList(db.NhaXuatBans.ToList().OrderBy(x => x.TenNXB), "MaNXB", "TenNXB");
             ViewBag.MaTG = new SelectList(db.TacGias.ToList().OrderBy(x => x.TenTG), "MaTG", "TenTG");
-
             //kiểm tra việc upload ảnh
             if (fileUpload == null)
             {
@@ -77,7 +92,6 @@ namespace WebBanSach.Areas.Admin.Controllers
                     var fileName = Path.GetFileName(fileUpload.FileName);
                     //chuyển file đường dẫn và biên dịch vào /images
                     var path = Path.Combine(Server.MapPath("/images"), fileName);
-
                     //kiểm tra đường dẫn ảnh có tồn tại?
                     if (System.IO.File.Exists(path))
                     {
@@ -88,11 +102,23 @@ namespace WebBanSach.Areas.Admin.Controllers
                         fileUpload.SaveAs(path);
                     }
 
-                    //thực hiện việc lưu đường dẫn ảnh vào link ảnh bìa
-                    sach.AnhBia = fileName;
-                    //thực hiện lưu vào db
-                    sach.MaSach = TaoMaSach();
-                    var result = new AdminProcess().InsertBook(sach);
+                    Sach.SachBuilder sachBuilder = new Sach.SachBuilder();
+
+
+                    sachBuilder.SetMaLoai(model.MaLoai)
+                              .SetMaNXB(model.MaNXB)
+                              .SetMaTG(model.MaTG)
+                              .SetTenSach(model.TenSach)
+                              .SetGiaBan(model.GiaBan)
+                              .SetMota(model.Mota)
+                              .SetNguoiDich(model.NguoiDich)
+                              .SetAnhBia(fileName)
+                              .SetNgayCapNhat(DateTime.Now)
+                              .SetSoLuongTon(model.SoLuongTon);
+
+
+                    var result = new AdminProcess().InsertBook(sachBuilder);
+
                     if (result > 0)
                     {
                         ViewBag.Success = "Thêm mới thành công";
@@ -105,7 +131,6 @@ namespace WebBanSach.Areas.Admin.Controllers
                     }
                 }
             }
-
             return View();
         }
 
@@ -118,6 +143,9 @@ namespace WebBanSach.Areas.Admin.Controllers
 
             return View(sach);
         }
+
+
+       
 
         public ActionResult UpdateBook(int id)
         {
@@ -586,6 +614,38 @@ namespace WebBanSach.Areas.Admin.Controllers
             var result = new OrderProcess().ListOrder();
 
             return View(result);
+        }
+        //POST: 
+        [HttpPost]
+        public async Task<ActionResult> UpdateOrder(int maDDH, bool tinhTrang, int tracking)
+        {
+
+            var order = db.DonDatHangs.FirstOrDefault(o => o.MaDDH == maDDH);
+            if (order != null)
+            {
+                order.TinhTrang = tinhTrang;
+                order.Tracking = tracking;
+                db.SaveChanges();
+
+                if (tinhTrang)
+                {
+                    var customerEmail = db.Database.SqlQuery<string>(
+                        "SELECT Email FROM KhachHang WHERE MaKH = {0}", order.MaKH)
+                        .FirstOrDefault();
+
+                    if (!string.IsNullOrEmpty(customerEmail))
+                    {
+                        TempData["Message"] = $"Tìm thấy MaKH: {order.MaKH}";
+                        var emailResult = await _orderSubject.Notify(order); 
+                        TempData["Message"] += $" | {emailResult}";
+                    }
+                    else
+                    {
+                        TempData["Message"] = $"Không tìm thấy email cho MaKH: {order.MaKH}";
+                    }
+                }
+            }
+            return RedirectToAction("Order");
         }
 
         //GET : /Admin/Home/DetailsOrder : trang xem chi tiết đơn hàng

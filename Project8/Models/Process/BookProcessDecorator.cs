@@ -34,5 +34,9 @@ namespace WebBanSach.Models.Process
         {
             return _bookProcess.ShowAllBook();
         }
+        public virtual Sach GetBookById(int id) // Thêm phương thức mới
+        {
+            return _bookProcess.GetBookById(id);
+        }
     }
 }

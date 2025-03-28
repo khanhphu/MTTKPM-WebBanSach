@@ -18,18 +18,22 @@ namespace WebBanSach.Controllers
 
         private readonly BSDBContext db;
         private readonly IOrderFactory _orderFactory;
-       
+        private readonly IBookProcess _bookProcess; // Thêm biến để sử dụng IBookProcess
+
         public CartController(BSDBContext db, IOrderFactory orderFactory)
         {
             this.db = db;
             this._orderFactory = orderFactory;
+            // Khởi tạo IBookProcess với DiscountBook
+            IBookProcess baseProcess = new BookProcess();
+            _bookProcess = new DiscountBook(baseProcess, 0.1); // Giảm giá 10%
         }
 
 
 
         public ActionResult Index()
         {
-            var cart = GetCartFromSession();
+            var cart = CartSingleton.Instance.CartItems; // Sửa: Lấy từ CartSingleton thay vì Session
             ViewBag.Total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
             return View(cart);
         }
@@ -38,33 +42,40 @@ namespace WebBanSach.Controllers
         [HttpPost]
         public JsonResult Add(int id, int quantity = 1)
         {
-            var book = db.Saches.Find(id);
+            //var book = db.Saches.Find(id);
+            var book = _bookProcess.GetBookById(id); // Sử dụng IBookProcess thay vì db trực tiếp
             if (book == null)
             {
                 return Json(new { success = false, message = "Sách không tồn tại" });
             }
+            /*
+            //var cart = GetCartFromSession();
+            //var cartItem = cart.FirstOrDefault(item => item.sach.MaSach == id);
 
-            var cart = GetCartFromSession();
-            var cartItem = cart.FirstOrDefault(item => item.sach.MaSach == id);
+            //if (cartItem != null)
+            //{
+            //    cartItem.Quantity += quantity;
+            //}
+            //else
+            //{
+            //    cart.Add(new CartModel { sach = book, Quantity = quantity });
+            //}
 
-            if (cartItem != null)
-            {
-                cartItem.Quantity += quantity;
-            }
-            else
-            {
-                cart.Add(new CartModel { sach = book, Quantity = quantity });
-            }
-
-            SaveCartToSession(cart);
-            var total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
-            var itemCount = cart.Count; 
-            return Json(new { success = true, total = total, itemCount=itemCount });
+            //SaveCartToSession(cart);
+            //var total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
+            //var itemCount = cart.Count;
+            //return Json(new { success = true, total = total, itemCount = itemCount });
+            */
+            CartSingleton.Instance.AddToCart(book, quantity);
+            var total = CartSingleton.Instance.GetTotal();
+            var itemCount = CartSingleton.Instance.CartItems.Count;
+            return Json(new { success = true, total = total, itemCount = itemCount });
         }
 
         [HttpPost]
         public JsonResult Update(int id, int quantity)
         {
+            /*
             var cart = GetCartFromSession();
             var cartItem = cart.FirstOrDefault(item => item.sach.MaSach == id);
 
@@ -85,12 +96,17 @@ namespace WebBanSach.Controllers
             SaveCartToSession(cart);
             var total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
             return Json(new { success = true, total = total, itemCount = cart.Count });
+            */
+            CartSingleton.Instance.UpdateCartItem(id, quantity);
+            var total = CartSingleton.Instance.GetTotal();
+            return Json(new { success = true, total = total, itemCount = CartSingleton.Instance.CartItems.Count });
         }
 
         // POST: /Cart/Remove
         [HttpPost]
         public JsonResult Remove(int id)
         {
+            /*
             var cart = GetCartFromSession();
             var cartItem = cart.FirstOrDefault(item => item.sach.MaSach == id);
 
@@ -103,18 +119,27 @@ namespace WebBanSach.Controllers
             SaveCartToSession(cart);
             var total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
             return Json(new { success = true, total = total, itemCount = cart.Count });
+            */
+            CartSingleton.Instance.RemoveFromCart(id);
+            var total = CartSingleton.Instance.GetTotal();
+            return Json(new { success = true, total = total, itemCount = CartSingleton.Instance.CartItems.Count });
         }
 
         // POST: /Cart/Clear
         [HttpPost]
         public JsonResult Clear()
         {
+            /*
             Session["Cart"] = null; // Clear the session
+            return Json(new { success = true, total = 0 });
+            */
+            CartSingleton.Instance.ClearCart();
             return Json(new { success = true, total = 0 });
         }
 
         public ActionResult CartHeader()
         {
+            /*
             var cart = GetCartFromSession();
             var list = new List<CartModel>();
             if (cart != null)
@@ -123,6 +148,9 @@ namespace WebBanSach.Controllers
             }
 
             return PartialView(list);
+            */
+            var cart = CartSingleton.Instance.CartItems;
+            return PartialView(cart);
         }
 
         private List<CartModel> GetCartFromSession()
@@ -177,6 +205,7 @@ namespace WebBanSach.Controllers
         [HttpGet]
         public ActionResult Payment()
         {
+            /*
             //kiểm tra đăng nhập
             if (Session["User"] == null || Session["User"].ToString() == "")
             {
@@ -190,13 +219,28 @@ namespace WebBanSach.Controllers
                     return RedirectToAction("Index");
                 }
 
-                var list = cart; 
+                var list = cart;
                 var sl = list.Sum(x => x.Quantity);
                 decimal? total = list.Sum(x => x.Total);
                 ViewBag.Quantity = sl;
                 ViewBag.Total = total;
                 return View(list);
             }
+            */
+            if (Session["User"] == null || Session["User"].ToString() == "")
+            {
+                return RedirectToAction("LoginPage", "User");
+            }
+            var cart = CartSingleton.Instance.CartItems;
+            if (cart.Count == 0)
+            {
+                return RedirectToAction("Index");
+            }
+            var sl = cart.Sum(x => x.Quantity);
+            decimal? total = cart.Sum(x => x.sach.GiaBan.GetValueOrDefault(0) * x.Quantity);
+            ViewBag.Quantity = sl;
+            ViewBag.Total = total;
+            return View(cart);
         }
         [HttpPost]
         public async Task<ActionResult> Payment(FormCollection f)
@@ -204,18 +248,19 @@ namespace WebBanSach.Controllers
             var userName = Session["User"];
             var user = db.KhachHangs.SingleOrDefault(x => x.TaiKhoan == userName);
             int MaKH = user.MaKH;
-            var cart = GetCartFromSession();
+            //var cart = GetCartFromSession();
+            var cart = CartSingleton.Instance.CartItems;
             if (cart == null || !cart.Any())
             {
-                return RedirectToAction("Index"); 
+                return RedirectToAction("Index");
             }
 
             try
             {
-               
+
                 // Create order using factory
-                var order = await _orderFactory.CreateOrderAsync(cart, MaKH); 
-                order.ThanhToan = 1;                                                                       
+                var order = await _orderFactory.CreateOrderAsync(cart, MaKH);
+                order.ThanhToan = 1;
                 foreach (var item in order.ChiTietDDHs)
                 {
                     var book = db.Saches.Find(item.MaSach);
@@ -226,9 +271,9 @@ namespace WebBanSach.Controllers
                 db.DonDatHangs.Add(order);
                 db.SaveChanges();
                 //xoa sach da mua trong gio hang
-                var purchasedId=order.ChiTietDDHs.Select(d=> d.MaSach).ToList();
+                var purchasedId = order.ChiTietDDHs.Select(d => d.MaSach).ToList();
                 cart.RemoveAll(item => purchasedId.Contains(item.sach.MaSach));
-                SaveCartToSession(cart);
+                //SaveCartToSession(cart); // Không cần SaveCartToSession vì đã dùng Singleton
                 //chuyen den trang thanh toan thanh cong
 
                 return Redirect("/Cart/Success");
@@ -264,13 +309,13 @@ namespace WebBanSach.Controllers
         }
         public JsonResult loadOrder()
         {
-            
+
             db.Configuration.ProxyCreationEnabled = false;
             var donDatHang = db.DonDatHangs.ToList();
 
             return Json(new { data = donDatHang }
                 , JsonRequestBehavior.AllowGet);
-          
+
         }
     }
 }
