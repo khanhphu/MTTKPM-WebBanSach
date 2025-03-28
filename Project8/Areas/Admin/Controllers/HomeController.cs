@@ -31,7 +31,11 @@ namespace WebBanSach.Areas.Admin.Controllers
             _orderSubject = new OrderSubject();
             //Phải comment lại mỗi khi push lên github ko nó sẽ xóa ở Sendgrid
             //string sendGridAPIKey = "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";
+
             //_orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
+
+          //  _orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
+
         }
 
         // GET: Admin/Home : trang chủ Admin
