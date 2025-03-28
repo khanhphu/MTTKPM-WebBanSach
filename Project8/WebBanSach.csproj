@@ -180,6 +180,7 @@
     <Compile Include="Areas\Admin\Code\OrderSubject.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginController.cs" />
+    <Compile Include="Models\CartSingleton.cs" />
     <Compile Include="Models\Data\AdminLog.cs" />
     <Compile Include="Areas\Admin\Models\LoginModel.cs" />
     <Compile Include="Controllers\BookController.cs" />

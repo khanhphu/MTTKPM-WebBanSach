@@ -55,6 +55,9 @@ namespace WebBanSach.Models.Process
         {
             return db.Saches.OrderBy(x => x.MaSach).ToList();
         }
-
+        public Sach GetBookById(int id) // Triển khai phương thức mới
+        {
+            return db.Saches.FirstOrDefault(x => x.MaSach == id);
+        }
     }
 }

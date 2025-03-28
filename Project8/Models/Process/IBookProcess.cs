@@ -13,5 +13,6 @@ namespace WebBanSach.Models.Process
         List<Sach> ThemeBook(int id);
         List<Sach> TakeBook(int count);
         List<Sach> ShowAllBook();
+        Sach GetBookById(int id); // Thêm phương thức mới
     }
 }

@@ -37,12 +37,13 @@ namespace Project8.Models.Data
                 var book = await _context.Saches.FindAsync(item.sach.MaSach);
                 if (book == null || book.SoLuongTon < item.Quantity)
                 {
-                    throw new InvalidOperationException($"{book.MaSach} không tồn tại hoặc hết hàng! ");
+                    throw new InvalidOperationException($"{book?.MaSach} không tồn tại hoặc hết hàng!");
                 }
                 order.ChiTietDDHs.Add(new ChiTietDDH
                 {
                     MaSach = book.MaSach,
                     SoLuong = item.Quantity,
+                    DonGia = item.sach.GiaBan // Sử dụng DonGia thay vì GiaBan
                 });
             }
             return order;
