@@ -30,7 +30,7 @@ namespace WebBanSach.Areas.Admin.Controllers
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12; // Buộc dùng TLS 1.2
             _orderSubject = new OrderSubject();
             //Phải comment lại mỗi khi push lên github ko nó sẽ xóa ở Sendgrid
-            string sendGridAPIKey = "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";
+            //string sendGridAPIKey = "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";
             _orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
         }
 
