@@ -61,35 +61,7 @@ namespace WebBanSach.Controllers
                 }
                 else
                 {
-
-                    kh.TaiKhoan = model.TaiKhoan;
-                    kh.MatKhau = model.MatKhau;
-                    kh.TenKH = model.TenKH;
-                    kh.Email = model.Email;
-                    kh.DiaChi = model.DiaChi;
-                    kh.DienThoai = model.DienThoai;
-                    kh.NgaySinh = model.NgaySinh;
-                    kh.NgayTao = DateTime.Now;
-                    kh.TrangThai = false;
-                    
-                    var result = user.InsertUser(kh);
-                    
-                    var idUser = db.KhachHangs.FirstOrDefault(n => n.Email == kh.Email && n.TenKH == kh.TenKH);
-                    if (result > 0)
-                    {
-                        Session["User"] = result;
-                        ModelState.Clear();
-                        //return Redirect("/Home/");
-                        //ModelState.AddModelError("", "Vui Lòng Check Email Kích Hoạt Tài Khoản !");
-                        return RedirectToAction("KiemTraThongBaoKichHoat", "User");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Đăng ký không thành công.");
-                    }
-
                     ModelState.AddModelError("", errorMessage);
-
                 }
             }
 
