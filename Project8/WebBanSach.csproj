@@ -733,6 +733,7 @@
     <Content Include="images\trai-bo-tung-linh.jpg" />
     <Content Include="images\viet-nam.jpg" />
     <Content Include="images\xuan-quynh.jpg" />
+    <Content Include="Models\Data\CommentsComposite\Comments.txt" />
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Scripts\bootstrap.js" />
