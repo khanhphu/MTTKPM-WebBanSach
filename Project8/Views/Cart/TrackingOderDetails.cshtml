@@ -8,13 +8,15 @@
     if (order != null)
     {
         <p><strong>Mã đơn hàng:</strong> @order.MaDDH</p>
-        <p><strong>Trạng thái:</strong> @(order.TinhTrang ? "Đã đặt" : "Đã hủy")</p>
-        if (order.TinhTrang)
+        <p><strong>Trạng thái:</strong> @(order.TinhTrang ? "Xác nhận" : "Chờ xác nhận")</p>
+        if (!order.TinhTrang)
         {
             <form action="@Url.Action("CancelOrder", "Cart")" method="post" style="display:inline;">
                 <input type="hidden" name="orderId" value="@order.MaDDH" />
                 <button type="submit" class="btn btn-danger btn-sm">Hủy đơn hàng</button>
             </form>
+
+            //mua lai neu don hang da co xac nhan tu admin
         }
         else
         {
@@ -22,6 +24,14 @@
                 <button type="submit" class="btn btn-warning btn-sm">Hoàn tác</button>
             </form>
         }
+
+        //Mua lai button- neu don hang da giao thanh cong thi moi mua lai duoc
+        if (order.Tracking == 3)
+        {
+            <a href="@Url.Action("ReOrder", "Cart", new { maDDH = order.MaDDH })" class="btn btn-success btn-sm">Mua lại</a>
+           
+        }
+
     }
 }
 <table class="table">

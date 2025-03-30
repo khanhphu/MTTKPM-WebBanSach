@@ -6,7 +6,19 @@
 
 <div class="container my-5">
     <h2 class="mb-4 text-center text-uppercase font-weight-bold">Giỏ hàng của bạn</h2>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
 
+    @if (TempData["Messages"] != null)
+    {
+        <div class="alert alert-warning">
+            @Html.Raw(TempData["Messages"])
+        </div>
+    }
     @if (Model.Any())
     {
         <div class="table-responsive">
@@ -62,7 +74,8 @@
                         </td>
                         <td colspan="1"></td>
                         <td class="text-center align-middle">
-                            <strong id="totalAmount">Tổng cộng: @(ViewBag.Total?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong>                        </td>
+                            <strong id="totalAmount">Tổng cộng: @(ViewBag.Total?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong>
+                        </td>
                         <td class="align-middle">
                             <a href="@Url.Action("Payment", "Cart")" class="btn btn-success btn-block">
                                 Thanh toán <i class="fa fa-angle-right ml-1"></i>

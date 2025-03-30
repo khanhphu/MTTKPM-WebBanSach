@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
+    using System.Data.Entity.Core.Metadata.Edm;
+    using System.Linq;
     [Table("DonDatHang")]
     public partial class DonDatHang
     {
@@ -39,5 +39,23 @@
         public virtual ICollection<ChiTietDDH> ChiTietDDHs { get; set; }
 
         public virtual KhachHang KhachHang { get; set; }
+
+        //Prototype
+        public DonDatHang CloneForCart()
+        {
+            return new DonDatHang
+            {
+                MaDDH = 0,
+                ChiTietDDHs = this.ChiTietDDHs.Select(ct => new ChiTietDDH
+                {
+                    MaSach = ct.MaSach,
+                    SoLuong = ct.SoLuong,
+                    DonGia = ct.DonGia,
+                }
+                ).ToList()
+            };
+           
+
+        }
     }
 }

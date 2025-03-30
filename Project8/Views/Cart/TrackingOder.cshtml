@@ -58,6 +58,13 @@
                                 <button type="submit" class="btn btn-warning btn-sm">Hoàn tác</button>
                             </form>
                         }
+
+                        @*//Mua lai button- neu don hang da giao thanh cong thi moi mua lai duoc*@
+                        @if (item.Tracking == 3)
+                        {
+                            <a href="@Url.Action("ReOrder", "Cart", new { maDDH = item.MaDDH })" class="btn btn-success btn-sm">Mua lại</a>
+
+                        }
                     </td>
                 </tr>
 }

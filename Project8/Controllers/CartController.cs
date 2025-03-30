@@ -335,5 +335,51 @@ namespace WebBanSach.Controllers
             var result = new OderDetailProcess().ListDetail(id);
             return View(result);
         }
+        //Mua lại đơn hàng đã giao thành công
+        [HttpGet]
+        public ActionResult ReOrder(int maDDH)
+        {
+            var oldOrder = db.DonDatHangs.Include("ChiTietDDHs").FirstOrDefault(o => o.MaDDH == maDDH);
+
+
+            if (oldOrder == null)
+            {
+                return View("Not Found");
+            }
+            var cloneOrder = oldOrder.CloneForCart();
+            var mess = new List<string>(); // list cac thong bao neu
+            foreach (var item in cloneOrder.ChiTietDDHs)
+            {
+                //tim sach trong chi tiet don hang
+                var sach = db.Saches.FirstOrDefault(s => s.MaSach == item.MaSach);
+                if (sach == null) //sach mua lai da bi xoa 
+                {
+                    mess.Add($"Sách mã {item.MaSach} không còn tồn tại.");
+                    continue;
+                }
+                if (sach.SoLuongTon < item.SoLuong)//het sach or ko du sl muon mua
+                {
+                    mess.Add($"Sách {sach.TenSach} chỉ còn {sach.SoLuongTon} cuốn, không đủ {item.SoLuong}.");
+                    continue;
+                }
+                if (sach.GiaBan != item.DonGia)
+                {
+                    mess.Add($"Giá sách {sach.TenSach} đã thay đổi từ {item.DonGia:C} thành {sach.GiaBan:C}.");
+                    item.DonGia = sach.GiaBan;
+                }
+
+                CartSingleton.Instance.AddToCart(sach, (int)item.SoLuong);
+                //var total = CartSingleton.Instance.GetTotal();
+                //var itemCount = CartSingleton.Instance.CartItems.Count;
+            }
+
+            if (mess.Any())
+            {
+                TempData["Messages"] = string.Join("<br/>", mess);
+            }
+
+            return RedirectToAction("Index", "Cart");
+        }
     }
+
 }
