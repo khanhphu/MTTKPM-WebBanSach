@@ -66,7 +66,7 @@ namespace WebBanSach.Controllers
                     var idUser = db.KhachHangs.FirstOrDefault(n => n.Email == kh.Email && n.TenKH == kh.TenKH);
                     if (result > 0)
                     {
-                        //Session["User"] = result;
+                        Session["User"] = result;
                         ModelState.Clear();
                         //return Redirect("/Home/");
                         //ModelState.AddModelError("", "Vui Lòng Check Email Kích Hoạt Tài Khoản !");

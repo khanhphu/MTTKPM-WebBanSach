@@ -196,6 +196,10 @@
     <Compile Include="Models\Data\BSDBContext.cs" />
     <Compile Include="Models\Data\Builder\SachFilterBuilder.cs" />
     <Compile Include="Models\Data\ChiTietDDH.cs" />
+    <Compile Include="Models\Data\Comments.cs" />
+    <Compile Include="Models\Data\CommentsComposite\CompositeComments.cs" />
+    <Compile Include="Models\Data\CommentsComposite\IComment.cs" />
+    <Compile Include="Models\Data\CommentsComposite\SingleComment.cs" />
     <Compile Include="Models\Data\DonDatHang.cs" />
     <Compile Include="Models\Data\DonDatHang_Ajax.cs" />
     <Compile Include="Models\Data\DonDatHang_m.cs" />
@@ -691,7 +695,6 @@
     <Content Include="Global.asax" />
     <Content Include="images\ai-roi-cung-khac.jpg" />
     <Content Include="images\bien-nien-co-don.jpg" />
-    <Content Include="images\bloc-sieu-dai.jpg" />
     <Content Include="images\bui-tho-giang.jpg" />
     <Content Include="images\che-lan-vien.jpg" />
     <Content Include="images\cho-xin-mot-ve-ve-tuoi-tho.jpg" />
@@ -1193,6 +1196,7 @@
     <Content Include="Views\Checkout\Checkout.cshtml" />
     <Content Include="Views\Book\Filter.cshtml" />
     <Content Include="Views\Book\_FilterPanel.cshtml" />
+    <Content Include="Views\Book\_Comments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

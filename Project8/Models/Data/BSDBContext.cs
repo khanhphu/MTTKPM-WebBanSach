@@ -5,7 +5,7 @@ namespace WebBanSach.Models.Data
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using WebBanSach.Areas.Admin.Models;
-
+    using WebBanSach.Models.Data.CommentsComposite;
     public partial class BSDBContext : DbContext
     {
         private static BSDBContext _instance;
@@ -41,7 +41,8 @@ namespace WebBanSach.Models.Data
         public virtual DbSet<Sach> Saches { get; set; }
         public virtual DbSet<TacGia> TacGias { get; set; }
         public virtual DbSet<TheLoai> TheLoais { get; set; }
-      //public virtual DbSet<AdminLog> AdminLogs { get; set; }
+      //them comments
+      public virtual DbSet<Comments> Comments { get; set; } 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -118,12 +119,25 @@ namespace WebBanSach.Models.Data
                 .HasMany(e => e.Saches)
                 .WithRequired(e => e.TheLoai)
                 .WillCascadeOnDelete(false);
-            ////Cap nhat cho mau Command- AdminLog
-            //modelBuilder.Entity<AdminLog>()
-            //    .HasRequired(l => l.Admin)
-            //    .WithMany()
-            //    .HasForeignKey(l => l.AdminId)
-            //    .WillCascadeOnDelete(false);
+            //comments
+            //voi bang Khach hHang
+            modelBuilder.Entity<Comments>()
+              .HasRequired(c => c.User)
+              .WithMany(kh => kh.Comments)
+              .HasForeignKey(c => c.UserId)
+              .WillCascadeOnDelete(false);
+            //voi bang Sach
+            modelBuilder.Entity<Comments>()
+            .HasRequired(c => c.Book)
+            .WithMany(s => s.Comments)
+            .HasForeignKey(c => c.BookId)
+            .WillCascadeOnDelete(false);
+            //voi bang comments (parentId)
+            modelBuilder.Entity<Comments>()
+            .HasOptional(c => c.Parent)
+            .WithMany(c => c.Replies)
+            .HasForeignKey(c => c.ParentId)
+            .WillCascadeOnDelete(false);
         }
     }
 }
