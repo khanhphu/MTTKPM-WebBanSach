@@ -10,6 +10,7 @@ using System.Text;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using WebBanSach.Controllers.Chain;
 
 namespace WebBanSach.Controllers
 {
@@ -32,52 +33,36 @@ namespace WebBanSach.Controllers
         }
 
         [HttpPost]
-        //POST: /User/Register : thực hiện lưu dữ liệu đăng ký tài khoản thành viên
         public ActionResult Register(KhachHang model)
         {
             if (ModelState.IsValid)
             {
-                var user = new UserProcess();
+                // Tạo chuỗi xử lý
+                IRegistrationHandler usernameHandler = new UsernameExistsHandler();
+                IRegistrationHandler passwordHandler = new PasswordValidationHandler();
+                IRegistrationHandler emailHandler = new EmailValidationHandler();
+                IRegistrationHandler phoneHandler = new PhoneValidationHandler();
+                IRegistrationHandler addressHandler = new AddressValidationHandler();
+                IRegistrationHandler saveUserHandler = new SaveUserHandler();
 
-                var kh = new KhachHang();
+                // Thiết lập chuỗi
+                usernameHandler.SetNext(passwordHandler);
+                passwordHandler.SetNext(emailHandler);
+                emailHandler.SetNext(phoneHandler);
+                phoneHandler.SetNext(addressHandler);
+                addressHandler.SetNext(saveUserHandler);
 
-                if (user.CheckUsername(model.TaiKhoan, model.MatKhau) == 1)
+                // Thực thi kiểm tra
+                var errorMessage = usernameHandler.Handle(model);
+
+                if (errorMessage == null)
                 {
-                    ModelState.AddModelError("", "Tài khoản đã tồn tại");
-                }
-                else if (user.CheckUsername(model.TaiKhoan, model.MatKhau) == -1)
-                {
-                    ModelState.AddModelError("", "Tài khoản đã tồn tại");
+                    return RedirectToAction("KiemTraThongBaoKichHoat", "User");
                 }
                 else
                 {
-                    kh.TaiKhoan = model.TaiKhoan;
-                    kh.MatKhau = model.MatKhau;
-                    kh.TenKH = model.TenKH;
-                    kh.Email = model.Email;
-                    kh.DiaChi = model.DiaChi;
-                    kh.DienThoai = model.DienThoai;
-                    kh.NgaySinh = model.NgaySinh;
-                    kh.NgayTao = DateTime.Now;
-                    kh.TrangThai = false;
-                    
-                    var result = user.InsertUser(kh);
-                    
-                    var idUser = db.KhachHangs.FirstOrDefault(n => n.Email == kh.Email && n.TenKH == kh.TenKH);
-                    if (result > 0)
-                    {
-                        //Session["User"] = result;
-                        ModelState.Clear();
-                        //return Redirect("/Home/");
-                        //ModelState.AddModelError("", "Vui Lòng Check Email Kích Hoạt Tài Khoản !");
-                        return RedirectToAction("KiemTraThongBaoKichHoat", "User");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Đăng ký không thành công.");
-                    }
+                    ModelState.AddModelError("", errorMessage);
                 }
-                            
             }
 
             return View(model);
