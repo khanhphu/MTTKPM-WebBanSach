@@ -3,6 +3,27 @@
     Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 <h2>Chi Tiết Đơn Hàng</h2>
+@{
+    var order = Model.FirstOrDefault()?.DonDatHang;
+    if (order != null)
+    {
+        <p><strong>Mã đơn hàng:</strong> @order.MaDDH</p>
+        <p><strong>Trạng thái:</strong> @(order.TinhTrang ? "Đã đặt" : "Đã hủy")</p>
+        if (order.TinhTrang)
+        {
+            <form action="@Url.Action("CancelOrder", "Cart")" method="post" style="display:inline;">
+                <input type="hidden" name="orderId" value="@order.MaDDH" />
+                <button type="submit" class="btn btn-danger btn-sm">Hủy đơn hàng</button>
+            </form>
+        }
+        else
+        {
+            <form action="@Url.Action("UndoCancelOrder", "Cart")" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-warning btn-sm">Hoàn tác</button>
+            </form>
+        }
+    }
+}
 <table class="table">
     <tr>
         <th>
@@ -21,21 +42,21 @@
 
     @foreach (var item in Model)
     {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.DonDatHang.MaDDH)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Sach.TenSach)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.SoLuong)
-    </td>
-    <td>
-        <p>@String.Format("{0:0,0}", item.DonGia) VND</p>
-    </td>
-</tr>
-}
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DonDatHang.MaDDH)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sach.TenSach)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoLuong)
+            </td>
+            <td>
+                <p>@String.Format("{0:0,0}", item.DonGia) VND</p>
+            </td>
+        </tr>
+    }
 
 </table>
 

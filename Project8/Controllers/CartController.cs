@@ -9,6 +9,7 @@ using WebBanSach.Models;
 using Newtonsoft.Json;
 using Project8.Models.Data;
 using System.Web.UI.WebControls;
+using WebBanSach.Models.Data.Command;
 
 namespace WebBanSach.Controllers
 {
@@ -29,7 +30,17 @@ namespace WebBanSach.Controllers
             _bookProcess = new DiscountBook(baseProcess, 0.1); // Giảm giá 10%
         }
 
-
+        // Lấy hoặc tạo CommandManager từ Session
+        private CommandManager GetCommandManager()
+        {
+            var manager = Session["CommandManager"] as CommandManager;
+            if (manager == null)
+            {
+                manager = new CommandManager();
+                Session["CommandManager"] = manager;
+            }
+            return manager;
+        }
 
         public ActionResult Index()
         {
@@ -37,6 +48,8 @@ namespace WebBanSach.Controllers
             ViewBag.Total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
             return View(cart);
         }
+
+        private readonly CommandManager _commandManager = new CommandManager();
 
         // POST: /Cart/Add
         [HttpPost]
@@ -295,27 +308,32 @@ namespace WebBanSach.Controllers
             return View();
         }
 
+        [HttpGet]
         public ActionResult TrackingOder()
         {
             List<DonDatHang> donDatHang = db.DonDatHangs.Where(p => p.MaKH == UserController.khachhangstatic.MaKH).ToList();
             return View(donDatHang);
         }
 
+        [HttpPost]
+        public ActionResult CancelOrder(int orderId)
+        {
+            var command = new CancelOrderCommand(db, orderId);
+            GetCommandManager().ExecuteCommand(command); // Sử dụng CommandManager từ Session
+            return RedirectToAction("TrackingOder");
+        }
+
+        [HttpPost]
+        public ActionResult UndoCancelOrder()
+        {
+            GetCommandManager().Undo(); // Hoàn tác từ CommandManager trong Session
+            return RedirectToAction("TrackingOder");
+        }
+
         public ActionResult TrackingOderDetails(int id)
         {
             var result = new OderDetailProcess().ListDetail(id);
-
             return View(result);
-        }
-        public JsonResult loadOrder()
-        {
-
-            db.Configuration.ProxyCreationEnabled = false;
-            var donDatHang = db.DonDatHangs.ToList();
-
-            return Json(new { data = donDatHang }
-                , JsonRequestBehavior.AllowGet);
-
         }
     }
 }

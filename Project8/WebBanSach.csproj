@@ -180,6 +180,12 @@
     <Compile Include="Areas\Admin\Code\OrderSubject.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginController.cs" />
+    <Compile Include="Controllers\Chain\AddressValidationHandler.cs" />
+    <Compile Include="Controllers\Chain\BaseRegistrationHandler .cs" />
+    <Compile Include="Controllers\Chain\ConcreteValidationHandler.cs" />
+    <Compile Include="Controllers\Chain\IRegistrationHandler.cs" />
+    <Compile Include="Controllers\Chain\PasswordValidationHandler.cs" />
+    <Compile Include="Controllers\Chain\PhoneValidationHandler.cs" />
     <Compile Include="Models\CartSingleton.cs" />
     <Compile Include="Models\Data\AdminLog.cs" />
     <Compile Include="Areas\Admin\Models\LoginModel.cs" />
@@ -200,6 +206,10 @@
     <Compile Include="Models\Data\CommentsComposite\CompositeComments.cs" />
     <Compile Include="Models\Data\CommentsComposite\IComment.cs" />
     <Compile Include="Models\Data\CommentsComposite\SingleComment.cs" />
+    <Compile Include="Models\Data\Command\CancelOrderCommand.cs" />
+    <Compile Include="Models\Data\Command\CommandManager.cs" />
+    <Compile Include="Models\Data\Command\ICommand.cs" />
+
     <Compile Include="Models\Data\DonDatHang.cs" />
     <Compile Include="Models\Data\DonDatHang_Ajax.cs" />
     <Compile Include="Models\Data\DonDatHang_m.cs" />

@@ -5,50 +5,69 @@
 <h2>Đơn Hàng Của Bạn</h2>
 @if (Model.Count() != 0)
 {
-<table class="table" id="myTable">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MaDDH)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayDat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayGiao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TinhTrang)
-            </th>
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaDDH)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NgayDat)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NgayGiao)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TinhTrang)
+                </th>
+                <th>Hành động</th>
 
-        </tr>
-    </thead>
+            </tr>
+        </thead>
 
-    <tbody>
-        @foreach (var item in Model.Reverse())
-        {
-<tr id="row_@item.MaDDH">
-    <td>
-        @Html.DisplayFor(modelItem => item.MaDDH)
-    </td>
+        <tbody>
+            @foreach (var item in Model.Reverse())
+            {
+                <tr id="row_@item.MaDDH">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaDDH)
+                    </td>
 
-    <td>
-        @Html.DisplayFor(modelItem => item.NgayDat)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.NgayGiao)
-    </td>
-    <td>
-        @Html.ActionLink("Xem", "TrackingOderDetails", "Cart", new { id = item.MaDDH }, new { @class = "nav-link" })
-    </td>
-</tr>}
-    </tbody>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NgayDat)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NgayGiao)
+                    </td>
+                    @*<td>
+                        @Html.ActionLink("Xem", "TrackingOderDetails", "Cart", new { id = item.MaDDH }, new { @class = "nav-link" })
+                    </td>*@
+                    <td>@(item.TinhTrang ? "Đã đặt" : "Đã hủy")</td>
+                    <td>
+                        @Html.ActionLink("Xem", "TrackingOderDetails", "Cart", new { id = item.MaDDH }, new { @class = "nav-link" })
+                        @if (item.TinhTrang) // Nếu chưa hủy
+                        {
+                            <form action="@Url.Action("CancelOrder", "Cart")" method="post" style="display:inline;">
+                                <input type="hidden" name="orderId" value="@item.MaDDH" />
+                                <button type="submit" class="btn btn-danger btn-sm">Hủy đơn hàng</button>
+                            </form>
+                        }
+                        else // Nếu đã hủy
+                        {
+                            <form action="@Url.Action("UndoCancelOrder", "Cart")" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-warning btn-sm">Hoàn tác</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+}
+        </tbody>
 
 
-</table> }
+    </table> }
 else
 {
-<div style="color:red;margin-top:50px;">Xin Lỗi Bạn Chưa Có Đơn Hàng Nào !</div>}
+    <div style="color:red;margin-top:50px;">Xin Lỗi Bạn Chưa Có Đơn Hàng Nào !</div>}
 <style>
     body {
         font-family: Arial;
