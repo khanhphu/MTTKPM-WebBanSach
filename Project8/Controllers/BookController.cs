@@ -9,6 +9,7 @@ using PagedList;
 using PagedList.Mvc;
 
 using WebBanSach.Models.Data.Builder;
+using WebBanSach.Models.Data.CommentsComposite;
 
 
 namespace WebBanSach.Controllers
@@ -45,12 +46,126 @@ namespace WebBanSach.Controllers
             //var result = new AdminProcess().GetIdBook(id);
             var book = _bookProcess.ShowAllBook().FirstOrDefault(x => x.MaSach == id);
 
-            if (book == null)
-            {
-                return HttpNotFound();
-            }
-            //return View(result);
+            var rootComments = db.Comments.Where(c => c.BookId == id && c.ParentId == null).ToList();
+            var commentTree = rootComments.Select(c => BuildCommentTree(c)).ToList();
+            ViewData["Comments"] = commentTree;
+            ViewBag.CurrentUser = Session["User"]?.ToString();
+            ViewBag.DbContext = db; // Đảm bảo dòng này có mặt
             return View(book);
+        }
+
+        private IComment BuildCommentTree(Comments entity)
+        {
+            var hasReplies = db.Comments.Any(c => c.ParentId == entity.Id);
+            if (hasReplies)
+            {
+                var composite = new CompositeComments
+                {
+                    Id = entity.Id,
+                    Content = entity.Content,
+                    UserId = entity.UserId,
+                    BookId = entity.BookId,
+                    Depth = entity.Depth,
+                    CreatedAt = entity.CreatedAt
+                };
+                var replies = db.Comments.Where(c => c.ParentId == entity.Id).ToList();
+                foreach (var reply in replies)
+                {
+                    composite._replies.Add(BuildCommentTree(reply));
+                }
+                return composite;
+            }
+            else
+            {
+                return new SingleComment
+                {
+                    Id = entity.Id,
+                    Content = entity.Content,
+                    UserId = entity.UserId,
+                    BookId = entity.BookId,
+                    Depth = entity.Depth,
+                    CreatedAt = entity.CreatedAt
+                };
+            }
+        }
+        [HttpPost]
+        public ActionResult AddComment(int bookId, string content, int? parentId)
+        {
+            try
+            {
+                if (Session["User"] == null || string.IsNullOrEmpty(Session["User"].ToString()))
+                {
+                    throw new UnauthorizedAccessException("Bạn cần đăng nhập để bình luận.");
+                }
+                var currentUser = Session["User"].ToString();
+                var khachHang = db.KhachHangs.FirstOrDefault(kh => kh.TaiKhoan == currentUser);
+                if (khachHang == null)
+                    throw new UnauthorizedAccessException($"Không tìm thấy thông tin khách hàng.session name:{currentUser} ");
+
+                var userId = khachHang.MaKH;
+
+                int depth = 0;
+                if (parentId.HasValue)
+                {
+                    var parentComment = db.Comments.FirstOrDefault(c => c.Id == parentId);
+                    if (parentComment == null)
+                        throw new ArgumentException("Bình luận cha không tồn tại.");
+                    depth = parentComment.Depth + 1;
+                }
+
+                var comment = new Comments
+                {
+                    Content = content,
+                    UserId = userId,
+                    BookId = bookId,
+                    CreatedAt = DateTime.Now,
+                    Depth = depth,
+                    ParentId = parentId
+                };
+                db.Comments.Add(comment);
+                db.SaveChanges();
+                return RedirectToAction("Details", new { id = bookId });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Details", new { id = bookId });
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Details", new { id = bookId });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                return RedirectToAction("Details", new { id = bookId });
+            }
+        }
+        [HttpPost]
+       
+        public ActionResult DeleteComment(int commentId, int bookId)
+        {
+            try
+            {
+                if (Session["User"] == null || string.IsNullOrEmpty(Session["User"].ToString()))
+                {
+                    throw new UnauthorizedAccessException("Bạn cần đăng nhập để bình luận.");
+                }
+                var currentUser = Session["User"].ToString();
+                var commentEntity = db.Comments.FirstOrDefault(c => c.Id == commentId);
+                if (commentEntity == null) return RedirectToAction("Details", new { id = bookId });
+
+                var comment = BuildCommentTree(commentEntity);
+                comment.Delete(db, currentUser);
+                db.SaveChanges();
+                return RedirectToAction("Details", new { id = bookId });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Details", new { id = bookId });
+            }
         }
 
         //GET : /Book/Favorite : hiển thị ra 3 cuốn sách bán chạy theo ngày cập nhật (silde trên cùng)

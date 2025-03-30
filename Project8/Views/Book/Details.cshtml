@@ -4,7 +4,10 @@
     ViewBag.Title = "Chi tiết";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
 <div class="row">
     <div style="float:left; margin-right:15px; margin-left:80px;" class="span5">
         <img src="/images/@Model.AnhBia" alt="@Model.AnhBia" title="@Model.TenSach" width="250" height="360" />
@@ -43,11 +46,76 @@
 </div>
 
 <hr />
+<h3>Thêm bình luận</h3>
+<form action="/Book/AddComment" method="post" class="comment-form">
+    <input type="hidden" name="bookId" value="@Model.MaSach" />
+    <div class="comment-input-wrapper">
+        <textarea name="content"
+                  required
+                  placeholder="Nhập bình luận của bạn..."
+                  class="comment-textarea"></textarea>
+    </div>
+    <button type="submit" class="comment-button">Bình luận</button>
+</form>
+<div class="comments">
+    @Html.Partial("_Comments", (IEnumerable<WebBanSach.Models.Data.CommentsComposite.IComment>)ViewData["Comments"])
+</div>
 <h3>Sách bán chạy</h3>
 <div class="row">
     @Html.Action("FavoriteBook", "Book")
 </div>
+<style>
+    .comment-form {
+        max-width: 600px;
+        margin: 20px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
 
+    .comment-input-wrapper {
+        width: 100%;
+    }
+
+    .comment-textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+    }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+
+    .comment-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+        width: fit-content;
+        align-self: flex-end;
+    }
+
+        .comment-button:hover {
+            background-color: #0056b3;
+        }
+
+        .comment-button:active {
+            background-color: #004085;
+        }
+</style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
         $(document).ready(function () {

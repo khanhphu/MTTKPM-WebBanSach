@@ -1,0 +1,166 @@
+﻿@model IEnumerable<WebBanSach.Models.Data.CommentsComposite.IComment>
+@using WebBanSach.Models.Data.CommentsComposite
+
+@{
+    var db = ViewBag.DbContext as WebBanSach.Models.Data.BSDBContext;
+}
+
+<style>
+    .comment {
+        border-bottom: 1px solid #e0e0e0;
+        padding: 10px 0;
+        background-color: #f9f9f9;
+    }
+
+        .comment .username {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .comment .date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .comment .content {
+            margin: 5px 0;
+            color: #34495e;
+        }
+
+        .comment .actions {
+            margin-top: 5px;
+        }
+
+        .comment .reply-toggle {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+            .comment .reply-toggle:hover {
+                background-color: #2980b9;
+            }
+
+        .comment .reply-form {
+            margin-top: 10px;
+            display: none; /* Ẩn form mặc định */
+            flex-direction: column;
+            gap: 10px;
+            max-width: 500px;
+        }
+
+            .comment .reply-form.active {
+                display: flex; /* Hiện form khi có class active */
+            }
+
+        .comment textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #2c3e50;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+            .comment textarea:focus {
+                border-color: #3498db;
+                outline: none;
+            }
+
+            .comment textarea::placeholder {
+                color: #95a5a6;
+            }
+
+        .comment button.delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .comment button.delete-btn:hover {
+                background-color: #c0392b;
+            }
+
+        .comment button.reply-btn {
+            align-self: flex-start;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+            .comment button.reply-btn:hover {
+                background-color: #2980b9;
+            }
+</style>
+
+@foreach (var comment in Model)
+{
+    var username = db != null ? db.KhachHangs.FirstOrDefault(kh => kh.MaKH == comment.UserId)?.TaiKhoan ?? "Unknown" : "Unknownpp";
+    System.Diagnostics.Debug.WriteLine($"UserId: {comment.UserId}, TaiKhoan: {username}");
+
+    <div class="comment" style="margin-left: @(comment.Depth * 20)px">
+        <p>
+            <span class="username">@username</span>
+            <span class="date"> - @comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+        </p>
+        <div class="content">@comment.Content</div>
+
+        @if (ViewBag.CurrentUser != null && db != null && ViewBag.CurrentUser == username)
+        {
+            <div class="actions">
+                <form action="/Book/DeleteComment" method="post" style="display:inline;">
+                    <input type="hidden" name="commentId" value="@comment.Id" />
+                    <input type="hidden" name="bookId" value="@comment.BookId" />
+                    <button type="submit" class="delete-btn">Xóa</button>
+                </form>
+            </div>
+        }
+
+        <!-- Nút toggle để hiện/ẩn form phản hồi -->
+        <button class="reply-toggle" onclick="toggleReplyForm('@comment.Id')">Phản hồi</button>
+
+        <!-- Form phản hồi, ẩn mặc định -->
+        <div class="reply-form" id="reply-form-@comment.Id">
+            <form action="/Book/AddComment" method="post">
+                <input type="hidden" name="bookId" value="@comment.BookId" />
+                <input type="hidden" name="parentId" value="@comment.Id" />
+                <textarea name="content" required placeholder="Nhập phản hồi của bạn..."></textarea>
+                <button type="submit" class="reply-btn">Phản hồi</button>
+            </form>
+        </div>
+
+        @{
+            var compositeComment = comment as CompositeComments;
+            var replies = compositeComment?._replies;
+            if (replies != null && replies.Any())
+            {
+                @Html.Partial("_Comments", replies)
+            }
+        }
+    </div>
+}
+
+<script>
+    function toggleReplyForm(commentId) {
+        var form = document.getElementById('reply-form-' + commentId);
+        form.classList.toggle('active');
+    }
+</script>
