@@ -216,7 +216,7 @@ namespace WebBanSach.Controllers
                     var kh = db.KhachHangs.Where(x => x.TaiKhoan == model.TaiKhoan).FirstOrDefault();
                     khachhangstatic = kh;
                     //trả về trang chủ
-                    return RedirectToAction("Index", "Home");
+                    return PartialView();
                 }
                 //nếu tài khoản không tồn tại
                 else if (result == 0)
