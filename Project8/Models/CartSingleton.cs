@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using WebBanSach.Models.Data;
+
 
 namespace WebBanSach.Models
 {
@@ -11,6 +14,7 @@ namespace WebBanSach.Models
         private static CartSingleton _instance;
         private static readonly object _lock = new object();
         private List<CartModel> _cartItems;
+        public int? CurrentOrderId { get; set; } // Thêm để lưu MaDDH của đơn hàng mới
 
         private CartSingleton()
         {
@@ -83,6 +87,52 @@ namespace WebBanSach.Models
         public decimal? GetTotal()
         {
             return _cartItems.Sum(item => item.sach.GiaBan * item.Quantity);
+        }
+
+
+
+        //thêm một chức năng cho singleton hỗ trợ đồng bộ đơn hàng clone
+        public async Task SyncWithOrder(BSDBContext db)
+        {
+            if (CurrentOrderId.HasValue)
+            {
+                var order = await db.DonDatHangs
+                            .Include("ChiTietDDHs") // EF6
+                            .FirstOrDefaultAsync(o => o.MaDDH == CurrentOrderId.Value);
+                if (order != null && !order.TinhTrang)
+                {
+                    var cartDict = CartItems.ToDictionary(i => i.sach.MaSach, i => i.Quantity);
+                    foreach (var item in order.ChiTietDDHs.ToList())
+                    {
+                        if (cartDict.ContainsKey(item.MaSach))
+
+                        //if (cartDict.TryGetValue(item.MaSach  ,   out int newQuantity)) // Đúng cú pháp                        {
+                        {
+                            item.SoLuong = cartDict[item.MaSach];
+                            cartDict.Remove(item.MaSach);
+                        }
+                        else
+                        {
+                            order.ChiTietDDHs.Remove(item);
+                        }
+                    }
+                    foreach (var newItem in cartDict)
+                    {
+                        var book = await db.Saches.FindAsync(newItem.Key);
+                        if (book != null && book.SoLuongTon >= newItem.Value)
+                        {
+                            order.ChiTietDDHs.Add(new ChiTietDDH
+                            {
+                                MaSach = newItem.Key,
+                                SoLuong = newItem.Value,
+                                DonGia = book.GiaBan
+                            });
+                        }
+                    }
+                    await db.SaveChangesAsync();
+                }
+
+            }
         }
     }
 }

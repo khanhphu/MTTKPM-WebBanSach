@@ -12,12 +12,14 @@
             @TempData["SuccessMessage"]
         </div>
     }
-
+    
     @if (TempData["Messages"] != null)
     {
-        <div class="alert alert-warning">
-            @Html.Raw(TempData["Messages"])
-        </div>
+        <div class="alert alert-info">@Html.Raw(TempData["Messages"])</div>
+    }
+    @if (TempData["NewOrderId"] != null)
+    {
+        <p>Đơn hàng mới của bạn: <a href="@Url.Action("TrackOrder", new { maDDH = TempData["NewOrderId"] })">#@TempData["NewOrderId"]</a></p>
     }
     @if (Model.Any())
     {

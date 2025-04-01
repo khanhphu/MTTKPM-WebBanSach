@@ -45,17 +45,18 @@
         {
             return new DonDatHang
             {
-                MaDDH = 0,
-                ChiTietDDHs = this.ChiTietDDHs.Select(ct => new ChiTietDDH
+                MaKH = this.MaKH,
+                NgayDat = DateTime.Now,
+                NgayGiao = DateTime.Now.AddDays(3),
+                TinhTrang = false,
+                ThanhToan = 0,
+                ChiTietDDHs = this.ChiTietDDHs.Select(c => new ChiTietDDH
                 {
-                    MaSach = ct.MaSach,
-                    SoLuong = ct.SoLuong,
-                    DonGia = ct.DonGia,
-                }
-                ).ToList()
+                    MaSach = c.MaSach,
+                    SoLuong = c.SoLuong,
+                    DonGia = c.DonGia
+                }).ToList()
             };
-           
-
         }
     }
 }
