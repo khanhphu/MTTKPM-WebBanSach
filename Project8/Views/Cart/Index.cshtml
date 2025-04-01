@@ -6,7 +6,21 @@
 
 <div class="container my-5">
     <h2 class="mb-4 text-center text-uppercase font-weight-bold">Giỏ hàng của bạn</h2>
-
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    
+    @if (TempData["Messages"] != null)
+    {
+        <div class="alert alert-info">@Html.Raw(TempData["Messages"])</div>
+    }
+    @if (TempData["NewOrderId"] != null)
+    {
+        <p>Đơn hàng mới của bạn: <a href="@Url.Action("TrackOrder", new { maDDH = TempData["NewOrderId"] })">#@TempData["NewOrderId"]</a></p>
+    }
     @if (Model.Any())
     {
         <div class="table-responsive">
@@ -62,8 +76,11 @@
                         </td>
                         <td colspan="1"></td>
                         <td class="text-center align-middle">
+
+
                             <strong>Tổng tiền hàng: @(ViewBag.Subtotal?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong><br />
                             <strong>Phí vận chuyển: @(ViewBag.ShippingCost?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong><br />
+
                             <strong id="totalAmount">Tổng cộng: @(ViewBag.Total?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong>
                         </td>
                         <td class="align-middle">

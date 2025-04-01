@@ -7,14 +7,14 @@ namespace WebBanSach.Models.Data.CommentsComposite
 {
     public class SingleComment : IComment
     {
-      
+
         public int Id { get; set; }
         public string Content { get; set; }
         public int UserId { get; set; }
         public int BookId { get; set; }
         public int Depth { get; set; }
         public DateTime CreatedAt { get; set; }
-       
+
         public void AddComment(BSDBContext context, int bookId, string content, string currentUser)
         {
             if (string.IsNullOrEmpty(currentUser))
@@ -30,7 +30,7 @@ namespace WebBanSach.Models.Data.CommentsComposite
                 BookId = bookId,
                 CreatedAt = DateTime.Now,
                 Depth = this.Depth + 1,
-                ParentId=this.Id, //binh luan nut la ko co binh luan cha
+                ParentId = this.Id, //binh luan nut la ko co binh luan cha
             };
             context.Comments.Add(newComment);
 
@@ -38,23 +38,15 @@ namespace WebBanSach.Models.Data.CommentsComposite
 
         public void Delete(BSDBContext context, string currentUser)
         {
-            var comment = context.Comments.FirstOrDefault(s => s.Id==this.Id);
+            var comment = context.Comments.FirstOrDefault(s => s.Id == this.Id);
             if (string.IsNullOrEmpty(currentUser) ||
-                context.KhachHangs.First(s => s.MaKH==comment.UserId).TaiKhoan !=currentUser) // lay ra ten KH co maKH trung vs maKH cua cmt
+                context.KhachHangs.First(s => s.MaKH == comment.UserId).TaiKhoan != currentUser) // lay ra ten KH co maKH trung vs maKH cua cmt
             {
                 throw new UnauthorizedAccessException("Ban chi co the xoa binh luan cua chinh minh!");
             }
-            context.Comments.Remove(comment);   
+            context.Comments.Remove(comment);
         }
-
-
-      
-
-     
-
-     
-
-      public  void AddReply(IComment comment)
+        public void AddReply(IComment comment)
         {
             throw new NotSupportedException("Khong chua phan hoi truc tiep");
 
