@@ -249,6 +249,8 @@
     <Compile Include="Models\Process\UserProcess.cs" />
     <Compile Include="Models\Repository\ITacGiaRepository.cs" />
     <Compile Include="Models\Repository\TacGiaRepository.cs" />
+    <Compile Include="Models\Strategies\FixedShippingCostStrategy.cs" />
+    <Compile Include="Models\Strategies\IShippingCostStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
