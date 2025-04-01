@@ -23,8 +23,8 @@ namespace WebBanSach.Controllers
 
         public CartController(BSDBContext db, IOrderFactory orderFactory)
         {
-            this.db = db;
-            this._orderFactory = orderFactory;
+            this.db = db;              // BSDBContext được inject qua constructor
+            this._orderFactory = orderFactory; // IOrderFactory được inject qua constructor
             // Khởi tạo IBookProcess với DiscountBook
             IBookProcess baseProcess = new BookProcess();
             _bookProcess = new DiscountBook(baseProcess, 0.1); // Giảm giá 10%
@@ -274,6 +274,7 @@ namespace WebBanSach.Controllers
                 // Create order using factory
                 var order = await _orderFactory.CreateOrderAsync(cart, MaKH);
                 order.ThanhToan = 1;
+                order.TinhTrang = true;
                 foreach (var item in order.ChiTietDDHs)
                 {
                     var book = db.Saches.Find(item.MaSach);
