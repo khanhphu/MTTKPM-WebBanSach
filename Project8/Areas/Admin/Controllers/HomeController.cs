@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Web.Helpers;
+using WebBanSach.Models.Repository;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
@@ -24,15 +25,18 @@ namespace WebBanSach.Areas.Admin.Controllers
         //Khởi tạo biến dữ liệu : db
         BSDBContext db = BSDBContext.Instance;
         //Khoi tao ObserverSubject 
+
         private readonly OrderSubject _orderSubject;
         public HomeController()
         {
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12; // Buộc dùng TLS 1.2
             _orderSubject = new OrderSubject();
+            _tacGiaRepository = new TacGiaRepository(); // Khởi tạo trực tiếp
+
             //Phải comment lại mỗi khi push lên github ko nó sẽ xóa ở Sendgrid
             //string sendGridAPIKey = "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";
 
-          //  _orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
+            //  _orderSubject.Attach(new EmailObserver(sendGridAPIKey,db));
 
 
         }
@@ -343,47 +347,30 @@ namespace WebBanSach.Areas.Admin.Controllers
 
         //Author
 
-        //GET : /Admin/Home/ShowListAuthor : trang quản lý tác giả
+        private readonly ITacGiaRepository _tacGiaRepository;
+
+       
+        
+        
+
         [HttpGet]
         public ActionResult ShowListAuthor()
         {
-            //gọi hàm xuất danh sách tác giả trong db
-            var model = new AdminProcess().ListAllAuthor();
-
-            //trả về View tương ứng
+            var model = _tacGiaRepository.GetAll();
             return View(model);
         }
 
-        //GET : /Admin/Home/AddAuthor : trang thêm tác giả
         public ActionResult AddAuthor()
         {
             return View();
         }
 
-        //POST : /Admin/Home/AddAuthor/:model : thực hiện việc thêm tác giả
         [HttpPost]
         public ActionResult AddAuthor(TacGia model)
         {
-            //kiểm tra tính hợp lệ dữ liệu
             if (ModelState.IsValid)
             {
-                //khởi tạo biến admin
-                var admin = new AdminProcess();
-
-                //khởi tạo đối tượng tg
-                var tg = new TacGia();
-
-                //gán dữ liệu
-                tg.TenTG = model.TenTG;
-                tg.QueQuan = model.QueQuan;
-                tg.NgaySinh = model.NgaySinh;
-                tg.NgayMat = model.NgayMat;
-                tg.TieuSu = model.TieuSu;
-
-                //gọi hàm thêm tác giả
-                var result = admin.InsertAuthor(tg);
-
-                //kiểm tra hàm
+                var result = _tacGiaRepository.Add(model);
                 if (result > 0)
                 {
                     ViewBag.Success = "Thêm mới thành công";
@@ -395,33 +382,23 @@ namespace WebBanSach.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Thêm không thành công.");
                 }
             }
-
             return View(model);
         }
 
-        //GET : /Admin/Home/UpdateAuthor/:id : trang thêm tác giả 
         [HttpGet]
         public ActionResult UpdateAuthor(int id)
         {
-            //gọi hàm lấy mã tác giả
-            var tg = new AdminProcess().GetIdAuthor(id);
-
+            var tg = _tacGiaRepository.GetById(id);
+            if (tg == null) return HttpNotFound();
             return View(tg);
         }
 
-        //POST : /Admin/Home/UpdateAuthor/:id : thực hiện việc thêm tác giả
         [HttpPost]
         public ActionResult UpdateAuthor(TacGia tg)
         {
-            //kiểm tra hợp lệ dữ liệu
             if (ModelState.IsValid)
             {
-                //khởi tạo biến admin
-                var admin = new AdminProcess();
-
-                //gọi hàm cập nhật tác giả
-                var result = admin.UpdateAuthor(tg);
-                //thực hiển kiểm tra
+                var result = _tacGiaRepository.Update(tg);
                 if (result == 1)
                 {
                     ViewBag.Success = "Cập nhật thành công";
@@ -431,24 +408,21 @@ namespace WebBanSach.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Cập nhật không thành công.");
                 }
             }
-
             return View(tg);
         }
 
-        //DELETE : /Admin/Home/DeleteAuthor/:id : thực hiện xóa tác giả
         [HttpDelete]
         public ActionResult DeleteAuthor(int id)
         {
-            //gọi hàm xóa tác giả
-            new AdminProcess().DeleteAuthor(id);
-
+            _tacGiaRepository.Delete(id);
             return RedirectToAction("ShowListAuthor");
         }
+    
 
-        //Publish
+    //Publish
 
-        //GET : /Admin/Home/ShowListPublish : trang quản lý nhà xuất bản
-        [HttpGet]
+    //GET : /Admin/Home/ShowListPublish : trang quản lý nhà xuất bản
+    [HttpGet]
         public ActionResult ShowListPublish()
         {
             //gọi hàm xuất danh sách nhà xuất bản

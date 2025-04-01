@@ -76,6 +76,11 @@
                         </td>
                         <td colspan="1"></td>
                         <td class="text-center align-middle">
+
+
+                            <strong>Tổng tiền hàng: @(ViewBag.Subtotal?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong><br />
+                            <strong>Phí vận chuyển: @(ViewBag.ShippingCost?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong><br />
+
                             <strong id="totalAmount">Tổng cộng: @(ViewBag.Total?.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ?? "0") ₫</strong>
                         </td>
                         <td class="align-middle">
@@ -164,6 +169,7 @@
 
             // Update UI helper
             function updateCartUI(response) {
+                // Vì hiện tại phí vận chuyển cố định, ta chỉ cần cập nhật total từ server
                 $('#totalAmount').text('Tổng cộng: ' + response.total.toLocaleString('vi-VN') + ' ₫');
                 if (response.itemCount === 0) {
                     $('#cart').hide();
