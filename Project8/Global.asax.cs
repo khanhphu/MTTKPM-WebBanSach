@@ -46,7 +46,7 @@ namespace WebBanSach
 
                 if (controllerType == typeof(CartController))
                 {
-                    return new CartController(_context, _orderFactory);
+                    return new CartController(_context);
                 }
 
                 // Fallback to default factory for other controllers

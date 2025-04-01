@@ -91,48 +91,48 @@ namespace WebBanSach.Models
 
 
 
-        //thêm một chức năng cho singleton hỗ trợ đồng bộ đơn hàng clone
-        public async Task SyncWithOrder(BSDBContext db)
-        {
-            if (CurrentOrderId.HasValue)
-            {
-                var order = await db.DonDatHangs
-                            .Include("ChiTietDDHs") // EF6
-                            .FirstOrDefaultAsync(o => o.MaDDH == CurrentOrderId.Value);
-                if (order != null && !order.TinhTrang)
-                {
-                    var cartDict = CartItems.ToDictionary(i => i.sach.MaSach, i => i.Quantity);
-                    foreach (var item in order.ChiTietDDHs.ToList())
-                    {
-                        if (cartDict.ContainsKey(item.MaSach))
+        ////thêm một chức năng cho singleton hỗ trợ đồng bộ đơn hàng clone
+        //public async Task SyncWithOrder(BSDBContext db)
+        //{
+        //    if (CurrentOrderId.HasValue)
+        //    {
+        //        var order = await db.DonDatHangs
+        //                    .Include("ChiTietDDHs") // EF6
+        //                    .FirstOrDefaultAsync(o => o.MaDDH == CurrentOrderId.Value);
+        //        if (order != null && !order.TinhTrang)
+        //        {
+        //            var cartDict = CartItems.ToDictionary(i => i.sach.MaSach, i => i.Quantity);
+        //            foreach (var item in order.ChiTietDDHs.ToList())
+        //            {
+        //                if (cartDict.ContainsKey(item.MaSach))
 
-                        //if (cartDict.TryGetValue(item.MaSach  ,   out int newQuantity)) // Đúng cú pháp                        {
-                        {
-                            item.SoLuong = cartDict[item.MaSach];
-                            cartDict.Remove(item.MaSach);
-                        }
-                        else
-                        {
-                            order.ChiTietDDHs.Remove(item);
-                        }
-                    }
-                    foreach (var newItem in cartDict)
-                    {
-                        var book = await db.Saches.FindAsync(newItem.Key);
-                        if (book != null && book.SoLuongTon >= newItem.Value)
-                        {
-                            order.ChiTietDDHs.Add(new ChiTietDDH
-                            {
-                                MaSach = newItem.Key,
-                                SoLuong = newItem.Value,
-                                DonGia = book.GiaBan
-                            });
-                        }
-                    }
-                    await db.SaveChangesAsync();
-                }
+        //                //if (cartDict.TryGetValue(item.MaSach  ,   out int newQuantity)) // Đúng cú pháp                        {
+        //                {
+        //                    item.SoLuong = cartDict[item.MaSach];
+        //                    cartDict.Remove(item.MaSach);
+        //                }
+        //                else
+        //                {
+        //                    order.ChiTietDDHs.Remove(item);
+        //                }
+        //            }
+        //            foreach (var newItem in cartDict)
+        //            {
+        //                var book = await db.Saches.FindAsync(newItem.Key);
+        //                if (book != null && book.SoLuongTon >= newItem.Value)
+        //                {
+        //                    order.ChiTietDDHs.Add(new ChiTietDDH
+        //                    {
+        //                        MaSach = newItem.Key,
+        //                        SoLuong = newItem.Value,
+        //                        DonGia = book.GiaBan
+        //                    });
+        //                }
+        //            }
+        //            await db.SaveChangesAsync();
+        //        }
 
-            }
-        }
+        //    }
+        //}
     }
 }

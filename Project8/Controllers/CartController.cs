@@ -19,13 +19,11 @@ namespace WebBanSach.Controllers
         //khởi tạo dữ liệu
 
         private readonly BSDBContext db;
-        private readonly IOrderFactory _orderFactory;
         private readonly IBookProcess _bookProcess; // Thêm biến để sử dụng IBookProcess
 
-        public CartController(BSDBContext db, IOrderFactory orderFactory)
+        public CartController(BSDBContext db)
         {
             this.db = db;
-            this._orderFactory = orderFactory;
             // Khởi tạo IBookProcess với DiscountBook
             IBookProcess baseProcess = new BookProcess();
             _bookProcess = new DiscountBook(baseProcess, 0.1); // Giảm giá 10%
@@ -213,98 +211,12 @@ namespace WebBanSach.Controllers
 
 
 
-        //private int TaoMaDDH()
-        //{
-        //    int r = (from ddh in db.DonDatHangs orderby ddh.MaDDH descending select ddh.MaDDH).First();
-        //    return r + 1;
-        //}
+       
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        [HttpGet]
-        public ActionResult Payment()
-        {
-            /*
-            //kiểm tra đăng nhập
-            if (Session["User"] == null || Session["User"].ToString() == "")
-            {
-                return RedirectToAction("LoginPage", "User");
-            }
-            else
-            {
-                var cart = GetCartFromSession();
-                if (cart.Count == 0)
-                {
-                    return RedirectToAction("Index");
-                }
-
-                var list = cart;
-                var sl = list.Sum(x => x.Quantity);
-                decimal? total = list.Sum(x => x.Total);
-                ViewBag.Quantity = sl;
-                ViewBag.Total = total;
-                return View(list);
-            }
-            */
-            if (Session["User"] == null || Session["User"].ToString() == "")
-            {
-                return RedirectToAction("LoginPage", "User");
-            }
-            var cart = CartSingleton.Instance.CartItems;
-            if (cart.Count == 0)
-            {
-                return RedirectToAction("Index");
-            }
-            var sl = cart.Sum(x => x.Quantity);
-            decimal? total = cart.Sum(x => x.sach.GiaBan.GetValueOrDefault(0) * x.Quantity);
-            ViewBag.Quantity = sl;
-            ViewBag.Total = total;
-            return View(cart);
-        }
-        //[HttpPost]
-        //public async Task<ActionResult> Payment(FormCollection f)
-        //{
-        //    var userName = Session["User"];
-        //    var user = db.KhachHangs.SingleOrDefault(x => x.TaiKhoan == userName);
-        //    int MaKH = user.MaKH;
-        //    //var cart = GetCartFromSession();
-        //    var cart = CartSingleton.Instance.CartItems;
-        //    if (cart == null || !cart.Any())
-        //    {
-        //        return RedirectToAction("Index");
-        //    }
-        
-        //    try
-        //    {
-
-        //        // Create order using factory
-        //        var order = await _orderFactory.CreateOrderAsync(cart, MaKH);
-        //        order.ThanhToan = 1;
-        //        foreach (var item in order.ChiTietDDHs)
-        //        {
-        //            var book = db.Saches.Find(item.MaSach);
-        //            book.SoLuongTon -= item.SoLuong;
-        //        }
-
-        //        // Save to database
-        //        db.DonDatHangs.Add(order);
-        //        db.SaveChanges();
-        //        //xoa sach da mua trong gio hang
-        //        var purchasedId = order.ChiTietDDHs.Select(d => d.MaSach).ToList();
-        //        cart.RemoveAll(item => purchasedId.Contains(item.sach.MaSach));
-        //        //SaveCartToSession(cart); // Không cần SaveCartToSession vì đã dùng Singleton
-        //        //chuyen den trang thanh toan thanh cong
-
-        //        return Redirect("/Cart/Success");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        log.Error("Lỗi khi thanh toán: ", ex);
-        //        return Redirect("/Cart/Error");
-        //    }
-
-        //}
+     
         public ActionResult Success()
         {
             return View();
@@ -343,6 +255,7 @@ namespace WebBanSach.Controllers
             return View(result);
         }
         //các actions khác...
+
         //Mua lại đơn hàng đã giao thành công
         public ActionResult ReOrder(int maDDH)
         {
@@ -350,24 +263,64 @@ namespace WebBanSach.Controllers
                 var originalOrder = db.DonDatHangs
                     .Include("ChiTietDDHs")
                     .FirstOrDefault(o => o.MaDDH == maDDH);
-                if (originalOrder != null)
-                {
-                    var clonedOrder = originalOrder.CloneForCart();
-                    db.DonDatHangs.Add(clonedOrder);
-                    db.SaveChanges();
-
-                    CartSingleton.Instance.CurrentOrderId = clonedOrder.MaDDH;
-                    CartSingleton.Instance.CartItems.Clear();
-                    CartSingleton.Instance.CartItems.AddRange(clonedOrder.ChiTietDDHs.Select(c => new CartModel
-                    {
-                        sach = db.Saches.Find(c.MaSach),
-                        Quantity =(int) c.SoLuong
-                    }));
-                }
+            if (originalOrder == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy đơn hàng để sao chép.";
                 return RedirectToAction("Index", "Cart");
-            
+            }
+
+            var clonedOrder = originalOrder.CloneForCart();
+            // Tối ưu: Lấy tất cả sách trong ChiTietDDHs cùng lúc
+            var bookIds = clonedOrder.ChiTietDDHs.Select(c => c.MaSach).ToList();
+            var books = db.Saches
+                .Where(b => bookIds.Contains(b.MaSach))
+                .ToDictionary(b => b.MaSach, b => b);
+            // Kiểm tra số lượng tồn
+            foreach (var item in clonedOrder.ChiTietDDHs)
+            {
+                var book = db.Saches.Find(item.MaSach); // Lấy trực tiếp từ database thay vì books
+                if (book == null || book.SoLuongTon < item.SoLuong)
+                {
+                    TempData["ErrorMessage"] = $"Sản phẩm {item.MaSach} không đủ số lượng tồn ({book?.SoLuongTon ?? 0} còn lại).";
+                    return RedirectToAction("Index", "Cart");
+                }
+            }
+            // Lưu bản sao vào database nếu tất cả sản phẩm đều đủ số lượng
+            db.DonDatHangs.Add(clonedOrder);
+            db.SaveChanges();
+
+            // Nạp dữ liệu vào giỏ hàng
+            CartSingleton.Instance.CurrentOrderId = clonedOrder.MaDDH;
+            CartSingleton.Instance.CartItems.Clear();
+            CartSingleton.Instance.CartItems.AddRange(clonedOrder.ChiTietDDHs.Select(c => new CartModel
+            {
+                sach = books[c.MaSach], // Dùng dữ liệu đã tải thay vì Find lại
+                Quantity = (int)c.SoLuong
+            }));
+            return RedirectToAction("Index", "Cart");
+
         }
         // Action thanh toán
+        [HttpGet]
+        public ActionResult Payment()
+        {
+
+            if (Session["User"] == null || Session["User"].ToString() == "")
+            {
+                return RedirectToAction("LoginPage", "User");
+            }
+            var cart = CartSingleton.Instance.CartItems;
+            if (cart.Count == 0)
+            {
+                return RedirectToAction("Index");
+            }
+            var sl = cart.Sum(x => x.Quantity);
+            decimal? total = cart.Sum(x => x.sach.GiaBan.GetValueOrDefault(0) * x.Quantity);
+            ViewBag.Quantity = sl;
+            ViewBag.Total = total;
+            return View(cart);
+        }
+
         [HttpPost]
         public async Task<ActionResult> Payment(FormCollection f)
         {
@@ -479,13 +432,12 @@ namespace WebBanSach.Controllers
                 cart.RemoveAll(item => purchasedId.Contains(item.sach.MaSach));
                 CartSingleton.Instance.CurrentOrderId = null; // Reset CurrentOrderId
 
-               // TempData["SuccessMessage"] = "Thanh toán thành công đơn hàng #" + order.MaDDH;
                 return Redirect("/Cart/Success");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Lỗi thanh toán: " + ex.Message;
-                Console.WriteLine("Inner Exception: " + ex.InnerException?.Message); // Debug thêm
+                Console.WriteLine("Inner Exception: " + ex.InnerException?.Message); 
                 return Redirect("/Cart/Error");
             }
         }
