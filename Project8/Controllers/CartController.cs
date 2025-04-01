@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Project8.Models.Data;
 using System.Web.UI.WebControls;
 using WebBanSach.Models.Data.Command;
+using WebBanSach.Models.Strategies;
 
 namespace WebBanSach.Controllers
 {
@@ -20,11 +21,13 @@ namespace WebBanSach.Controllers
         private readonly BSDBContext db;
         private readonly IOrderFactory _orderFactory;
         private readonly IBookProcess _bookProcess; // Thêm biến để sử dụng IBookProcess
+        private readonly IShippingCostStrategy _shippingCostStrategy; // Thêm thuộc tính
 
-        public CartController(BSDBContext db, IOrderFactory orderFactory)
+        public CartController(BSDBContext db, IOrderFactory orderFactory, IShippingCostStrategy shippingCostStrategy = null)
         {
             this.db = db;              // BSDBContext được inject qua constructor
             this._orderFactory = orderFactory; // IOrderFactory được inject qua constructor
+            this._shippingCostStrategy = shippingCostStrategy ?? new FixedShippingCostStrategy(30000m); // Mặc định 30,000 VND
             // Khởi tạo IBookProcess với DiscountBook
             IBookProcess baseProcess = new BookProcess();
             _bookProcess = new DiscountBook(baseProcess, 0.1); // Giảm giá 10%
@@ -44,8 +47,15 @@ namespace WebBanSach.Controllers
 
         public ActionResult Index()
         {
-            var cart = CartSingleton.Instance.CartItems; // Sửa: Lấy từ CartSingleton thay vì Session
-            ViewBag.Total = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
+            var cart = CartSingleton.Instance.CartItems;
+            var subtotal = cart.Sum(item => item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity);
+            var shippingCost = _shippingCostStrategy.CalculateShippingCost(cart);
+            var total = subtotal + shippingCost;
+
+            ViewBag.Subtotal = subtotal;
+            ViewBag.ShippingCost = shippingCost;
+            ViewBag.Total = total;
+
             return View(cart);
         }
 
@@ -249,10 +259,15 @@ namespace WebBanSach.Controllers
             {
                 return RedirectToAction("Index");
             }
-            var sl = cart.Sum(x => x.Quantity);
-            decimal? total = cart.Sum(x => x.sach.GiaBan.GetValueOrDefault(0) * x.Quantity);
-            ViewBag.Quantity = sl;
+            var subtotal = cart.Sum(x => x.sach.GiaBan.GetValueOrDefault(0) * x.Quantity);
+            var shippingCost = _shippingCostStrategy.CalculateShippingCost(cart);
+            var total = subtotal + shippingCost;
+
+            ViewBag.Quantity = cart.Sum(x => x.Quantity);
+            ViewBag.Subtotal = subtotal;
+            ViewBag.ShippingCost = shippingCost;
             ViewBag.Total = total;
+
             return View(cart);
         }
         [HttpPost]

@@ -1,4 +1,4 @@
-﻿﻿@model List<WebBanSach.Models.CartModel>
+﻿@model List<WebBanSach.Models.CartModel>
 
 @{
     ViewBag.Title = "Thanh toán";
@@ -32,10 +32,12 @@
                     }
                 </tbody>
             </table>
-            <p>Tổng số lượng: @ViewBag.Quantity</p>
-            <p>
-                Tổng tiền: @ViewBag.Total.ToString("C0", culture)
-            </p>
+            <div class="payment-summary">
+                <p>Tổng số lượng: @ViewBag.Quantity</p>
+                <p>Tổng tiền hàng: @ViewBag.Subtotal.ToString("C0", culture)</p>
+                <p>Phí vận chuyển: @ViewBag.ShippingCost.ToString("C0", culture)</p>
+                <p><strong>Tổng cộng: @ViewBag.Total.ToString("C0", culture)</strong></p>
+            </div>
             <button type="submit" class="btn btn-success">Xác nhận thanh toán</button>
         </form>
     }
@@ -44,3 +46,19 @@
         <p>Giỏ hàng của bạn trống.</p>
     }
 </div>
+
+<style>
+    .payment-summary {
+        margin-top: 20px;
+        font-size: 1.1rem;
+    }
+
+        .payment-summary p {
+            margin-bottom: 5px;
+        }
+
+        .payment-summary strong {
+            font-size: 1.2rem;
+            color: #28a745;
+        }
+</style>
