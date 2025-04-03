@@ -136,7 +136,10 @@
                         alert(response.message);
                     }
                 }).fail(function (xhr, status, error) {
-                    alert('Lỗi kết nối đến server: ' + error);
+                    console.log("Status: " + status);
+                    console.log("Error: " + error);
+                    console.log("Response: " + xhr.responseText);
+                    alert("Không thể tải panel lọc. Xem console để biết chi tiết.");
                 });
             });
         });

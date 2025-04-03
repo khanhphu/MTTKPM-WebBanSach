@@ -43,7 +43,9 @@ namespace WebBanSach.Models
 
         public void AddToCart(Sach book, int quantity)
         {
-            var existingItem = _cartItems.FirstOrDefault(item => item.sach.MaSach == book.MaSach);
+            if (book == null) throw new ArgumentNullException(nameof(book)); // Defensive, though controller checks this
+
+            var existingItem = _cartItems.FirstOrDefault(item => item.sach != null && item.sach.MaSach == book.MaSach);
             if (existingItem != null)
             {
                 existingItem.Quantity += quantity;
